@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
+from sklearn.preprocessing import normalize
 
 '''
 1. categorial
@@ -94,20 +95,29 @@ def main():
     data.fillna(-1, inplace=True)
 
 
+
+    #
+    # # Dealing with numerical data, normalization
+    #
+    # WHAT a lot of values to normalize is set to '-1' which gives negative results after normalization
+    to_normalize = ['Loan_Amount_Submitted','Loan_Tenure_Submitted','Loan_Amount_Applied','Loan_Tenure_Applied', 'Var5']
+    data = pd.concat((data.drop(to_normalize,axis=1),
+                      pd.DataFrame(normalize(data.loc[:,to_normalize]), columns=to_normalize)),
+                      axis=0)
+    
+    print(data.Loan_Tenure_Submitted.describe())
     #
     # # One Hot Encoding data
     #
     to_one_hot = ['Var1', 'City', 'Var2','Var4', 'Source']
 
-
-    #
-    # # Dealing with numerical data, normalization
-    #
-    to_normalize = ['Loan_Amount_Submitted','Loan_Tenure_Submitted','Loan_Amount_Applied','Loan_Tenure_Applied', 'Var5']
     X = data.drop(["LoggedIn", "Disbursed"], axis=1)
     X = pd.get_dummies(X,columns=to_one_hot)
     y = data.Disbursed
 
+    #
+    # # Machine learning part
+    #
 
 
     from sklearn.model_selection import train_test_split
@@ -122,40 +132,40 @@ def main():
     from sklearn.ensemble import AdaBoostClassifier
     from xgboost.sklearn import XGBClassifier
 
+    #
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=15000)
+    # y_train.mean(), y_test.mean()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=15000)
-    y_train.mean(), y_test.mean()
-
-    for model in [DecisionTreeClassifier(min_samples_leaf=1),
-                  RandomForestClassifier(200, min_samples_leaf=1),
-                  XGBClassifier(n_estimators=50, min_child_weight=1)]:
-
-        model.fit(X_train, y_train)
-        print(f1_score(y_test, model.predict(X_test)))
-
-    for model in [XGBClassifier(n_estimators=20),
-                  XGBClassifier(n_estimators=100)]:
-    
-        model.fit(X_train, y_train)
-        print(f1_score(y_test, model.predict_proba(X_test)[:,1]>0.1))
-
-    (model.predict_proba(X_test)[:,1]>0.3).sum()
-
-    model = DecisionTreeClassifier(class_weight={0:1, 1:100})
-    model.fit(X_train, y_train)
-    print(f1_score(y_test, model.predict(X_test)))
-
-    model.predict(X_test).sum()
-
-
-    model = RandomForestClassifier(class_weight={0:1, 1:100})
-    model.fit(X_train, y_train)
-    print(f1_score(y_test, model.predict(X_test)))
-    
-    
-    
-    
-    
+    # for model in [DecisionTreeClassifier(min_samples_leaf=1),
+    #               RandomForestClassifier(200, min_samples_leaf=1),
+    #               XGBClassifier(n_estimators=50, min_child_weight=1)]:
+    #
+    #     model.fit(X_train, y_train)
+    #     print(f1_score(y_test, model.predict(X_test)))
+    #
+    # for model in [XGBClassifier(n_estimators=20),
+    #               XGBClassifier(n_estimators=100)]:
+    #
+    #     model.fit(X_train, y_train)
+    #     print(f1_score(y_test, model.predict_proba(X_test)[:,1]>0.1))
+    #
+    # (model.predict_proba(X_test)[:,1]>0.3).sum()
+    #
+    # model = DecisionTreeClassifier(class_weight={0:1, 1:100})
+    # model.fit(X_train, y_train)
+    # print(f1_score(y_test, model.predict(X_test)))
+    #
+    # model.predict(X_test).sum()
+    #
+    #
+    # model = RandomForestClassifier(class_weight={0:1, 1:100})
+    # model.fit(X_train, y_train)
+    # print(f1_score(y_test, model.predict(X_test)))
+    #
+    #
+    #
+    #
+    #
     
     return X,y
 
