@@ -2,26 +2,16 @@
 # coding: utf-8
 
 # In[1]:
-
-
 import pandas as pd
 
-# In[2]:
-
-
-df = pd.read_csv('models.csv')
-cols = df.columns[:-1]
-df['std'] = round(df[cols].std(axis=1), 7)
-
-df.head()
+df_fast_results = pd.read_csv('models.csv')
+cols = df_fast_results.columns[:-1]
+df_fast_results['std'] = round(df_fast_results[cols].std(axis=1), 7)
 
 # In[3]:
-
-# In[10]:
-
-
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.model_selection import train_test_split
 import classes
@@ -70,31 +60,15 @@ bin_pipeline = Pipeline([
 # # Dealing with numerical features, standarization
 #
 # WHAT a lot of values to normalize is set to '-1' which gives negative results after normalization
-
+# probably should be changed to mean or mode
 features_to_normalize = ['Loan_Amount_Submitted', 'Loan_Tenure_Submitted', 'Loan_Amount_Applied', 'Loan_Tenure_Applied',
                          'Var5', 'EMI_Loan_Submitted', 'Processing_Fee', 'Interest_Rate', 'Monthly_Income']
 
-from sklearn.base import BaseEstimator, TransformerMixin
-
-
-class BackToDf(BaseEstimator, TransformerMixin):
-    def __init__(self, columns):
-        super().__init__()
-        self._columns = columns
-    
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        df = pd.DataFrame(X, columns=self._columns)
-        return df
-
-
-# #TODO check if standard scaler or normalization is better for the data
+# TODO check if standard scaler or normalization is better for the data
 num_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(features_to_normalize)),
     ("scaler", StandardScaler()),
-    ("back_to_df", BackToDf(features_to_normalize))
+    ("back_to_df", classes.BackToDf(features_to_normalize))
 ])
 num_pipeline.fit_transform(X_train)
 
@@ -133,7 +107,7 @@ income_pipeline = Pipeline([
 # income_pipeline.fit_transform(X_train)
 
 
-preprocess_pipeline = FeatureUnion(transformer_list=[
+feature_pipeline = FeatureUnion(transformer_list=[
     ("bin_pipeline", bin_pipeline),
     ("city_pipeline", city_pipeline),
     ("source_pipeline", source_pipeline),
@@ -142,40 +116,41 @@ preprocess_pipeline = FeatureUnion(transformer_list=[
     ("num_pipeline", num_pipeline),
 ])
 
-from sklearn.impute import SimpleImputer
-
-fillna_pipeline = Pipeline([
-    ("preprocess_pipe", preprocess_pipeline),
+preprocess_pipeline = Pipeline([
+    ("preprocess_pipe", feature_pipeline),
     ("fillna_new", SimpleImputer(strategy='constant', fill_value=-1))
 ])
+# X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
 
-X_train_prep_filled = fillna_pipeline.fit_transform(X_train)
 
 # #
 # # # Machine Learning Part
 # #
 
+from sklearn.model_selection import StratifiedKFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
 
-# seed = 123
-# kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
+# # CV
+seed = 123
+kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
 
 # # DecisionTreeClassifier
+from imblearn.pipeline import Pipeline
 
-# from imblearn.pipeline import Pipeline
-# pipe = Pipeline([
-#     ('preprocessing', preprocess_pipeline),
-# #     ('imba', ADASYN()),
-#     ('classifier', DecisionTreeClassifier()),
-# ])
+pipe = Pipeline([
+    ('preprocessing', preprocess_pipeline),
+    #     ('imba', ADASYN()),
+    ('classifier', DecisionTreeClassifier()),
+])
 
+param_grid = {
+    'classifier__max_features': [1, 5, 10]
+}
 
-# param_grid = {
-#             'classifier__max_features': [1, 5, 10]
-# }
-
-# grid_1 = GridSearchCV(pipe, param_grid, cv=kfold)
-# grid_1.fit(X_train, y_train)
-# grid_1.best_params_
+grid_1 = GridSearchCV(pipe, param_grid, cv=kfold)
+grid_1.fit(X_train, y_train)
+print(grid_1.best_params_)
 
 # #
 # # # RandomForestClassifier

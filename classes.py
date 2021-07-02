@@ -21,7 +21,6 @@ class MostFrequentImputer(BaseEstimator, TransformerMixin):
         self.most_frequent_ = pd.Series([X[c].value_counts().index[0] for c in X],
                                         index=X.columns)
         return self
-    
     def transform(self, X, y=None):
         return X.fillna(self.most_frequent_)
 
@@ -116,12 +115,25 @@ class Fillna_new():
     #
     # # Dealing with nan values
     #
-    
+
     # TODO is it a right idea to get rid of nan?
     def fit(self, X, y=None):
         return self
-    
+
     def transform(self, X, y=None):
         X = X.fillna(-1)
         return X
         # return X.fillna(-1, inplace=True)
+
+
+class BackToDf(BaseEstimator, TransformerMixin):
+    def __init__(self, columns):
+        super().__init__()
+        self._columns = columns
+    
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        df = pd.DataFrame(X, columns=self._columns)
+        return df
