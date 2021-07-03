@@ -30,8 +30,8 @@ data = pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
 # # Getting rid of irrelevant features
 #
 irrelevant_features = ["DOB", "Lead_Creation_Date", "ID", "Employer_Name", "Salary_Account"]
-data = data.drop(irrelevant_features, axis=1)
-data = data.dropna(subset=["Loan_Amount_Applied"])
+data = data.drop(irrelevant_features, axis=1)  # drops features that have no impact on model
+data = data.dropna(subset=["Loan_Amount_Applied"])  # drops variables where Loan_Amount_applied is NaN
 
 #
 # # getting X and y 
@@ -47,11 +47,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_
 #
 # # Dealing with binary features
 #
+
 binary_features = ['Gender', 'Mobile_Verified', 'Filled_Form', 'Device_Type']
 
 binary_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(binary_features)),
-    ("impute", classes.MostFrequentImputer()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
+    ("back_to_df", classes.BackToDf(binary_features)),
     ("bin", classes.BinEncoder()),
 ])
 # binary_pipeline.fit_transform(X_train)
@@ -68,7 +70,7 @@ features_to_normalize = ['Loan_Amount_Submitted', 'Loan_Tenure_Submitted', 'Loan
 # TODO check if standard scaler or normalization is better for the data
 num_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(features_to_normalize)),
-    ("impute", SimpleImputer()),
+    ("impute", SimpleImputer(strategy="median")),
     ("scaler", StandardScaler()),
     ("back_to_df", classes.BackToDf(features_to_normalize))
 ])
@@ -82,7 +84,7 @@ to_one_hot = ['Var1', 'Var2', 'Var4']
 
 cat_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(to_one_hot)),
-    ("impute", classes.MostFrequentImputer()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", OneHotEncoder(sparse=False, handle_unknown='ignore')),
 ])
 # cat_pipeline.fit_transform(X_train)
@@ -90,7 +92,7 @@ cat_pipeline = Pipeline([
 city_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(['City'])),
     ("city", classes.City()),
-    ("impute", classes.MostFrequentImputer()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", OneHotEncoder(sparse=False, handle_unknown='ignore')),
 ])
 # city_pipeline.fit_transform(X_train)
@@ -98,7 +100,7 @@ city_pipeline = Pipeline([
 source_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(['Source'])),
     ("source", classes.Source()),
-    ("impute", classes.MostFrequentImputer()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", OneHotEncoder(sparse=False, handle_unknown='ignore')),
 ])
 # source_pipeline.fit_transform(X_train)
@@ -106,7 +108,7 @@ source_pipeline = Pipeline([
 income_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(['Monthly_Income'])),
     ("income", classes.Income()),
-    ("impute", SimpleImputer()),
+    ("impute", SimpleImputer(strategy="median")),
     ("scaler", StandardScaler()),
 ])
 # income_pipeline.fit_transform(X_train)

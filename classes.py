@@ -16,15 +16,6 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
         return X[self.attribute_names]
 
 
-class MostFrequentImputer(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        self.most_frequent_ = pd.Series([X[c].value_counts().index[0] for c in X],
-                                        index=X.columns)
-        return self
-    def transform(self, X, y=None):
-        return X.fillna(self.most_frequent_)
-
-
 class LabelEncoderNew(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
@@ -36,20 +27,34 @@ class LabelEncoderNew(BaseEstimator, TransformerMixin):
         
         return X
 
-
 class BinEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
-        tests = {}
-        for col in X.columns:
-            tests[col] = X[col][1]
-        
-        for k, v in tests.items():
-            X[k] = (X[k] == v).astype(int)
+        self.tests = {}
         return self
-    
+
     def transform(self, X, y=None):
-        
+        for col in X.columns:
+            self.tests[col] = X[col][1]
+    
+        for k, v in self.tests.items():
+            X[k] = (X[k] == v).astype(int)
+    
         return X
+
+
+# class BinEncoder(BaseEstimator, TransformerMixin):
+#     def fit(self, X, y=None):
+#         tests = {}
+#         for col in X.columns:
+#             tests[col] = X[col][1]
+#
+#         for k, v in tests.items():
+#             X[k] = (X[k] == v).astype(int)
+#         return self
+#
+#     def transform(self, X, y=None):
+#
+#         return X
 
 
 # Finished works good
