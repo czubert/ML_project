@@ -113,7 +113,7 @@ income_pipeline = Pipeline([
 
 preprocess_pipeline = FeatureUnion(transformer_list=[
     ("bin_pipeline", binary_pipeline),
-    # ("city_pipeline", city_pipeline),
+    ("city_pipeline", city_pipeline),
     ("source_pipeline", source_pipeline),
     ("income_pipeline", income_pipeline),
     ("cat_pipeline", cat_pipeline),
@@ -147,8 +147,8 @@ param_grid = {
 }
 
 grid_1 = GridSearchCV(pipe, param_grid, cv=kfold)
-# grid_1.fit(X_train, y_train)
-# print(grid_1.best_params_)
+grid_1.fit(X_train, y_train)
+print(grid_1.best_params_)
 
 # #
 # # # RandomForestClassifier
