@@ -37,7 +37,7 @@ class LabelEncoderNew(BaseEstimator, TransformerMixin):
         return X
 
 
-class BinEncoder():
+class BinEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         tests = {}
         for col in X.columns:
@@ -109,21 +109,6 @@ class Income(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         X.Monthly_Income[self.mask_] = self.monthly_income_
         return X
-
-
-class Fillna_new():
-    #
-    # # Dealing with nan values
-    #
-
-    # TODO is it a right idea to get rid of nan?
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, y=None):
-        X = X.fillna(-1)
-        return X
-        # return X.fillna(-1, inplace=True)
 
 
 class BackToDf(BaseEstimator, TransformerMixin):
