@@ -21,6 +21,7 @@ class LabelEncoderNew(BaseEstimator, TransformerMixin):
         return self
     
     def transform(self, X, y=None):
+        X = X.copy()
         for col in X.columns:
             le = LabelEncoder()
             X[col] = le.fit_transform(X[col])
@@ -35,7 +36,7 @@ class BinEncoder(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         for col in X.columns:
             self.tests[col] = X[col][1]
-    
+        X = X.copy()
         for k, v in self.tests.items():
             X[k] = (X[k] == v).astype(int)
     
@@ -79,6 +80,7 @@ class City(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         # splits cities into groups depending on the number of citizens
         # replaces NaN values with random not NaN values in City feature
+        X = X.copy()
         X.loc[:, 'City'] = (X['City'].map(self.replace_data_)
                             .fillna(self.most_frequent_)
                             )
@@ -91,6 +93,7 @@ class Source(BaseEstimator, TransformerMixin):
         return self
     
     def transform(self, X, y=None):
+        X = X.copy()
         mask = ~X['Source'].isin({'S122', 'S133'})
         X.loc[mask, 'Source'] = 'Other'
         
@@ -112,6 +115,7 @@ class Income(BaseEstimator, TransformerMixin):
         return self
     
     def transform(self, X, y=None):
+        X = X.copy()
         X.Monthly_Income[self.mask_] = self.monthly_income_
         return X
 
