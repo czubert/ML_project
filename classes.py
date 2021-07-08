@@ -16,6 +16,40 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
         return X[self.attribute_names]
 
 
+class MyOneHotEncoder(BaseEstimator, TransformerMixin):
+    # def __init__(self, columns):
+    #     super().__init__()
+    #     self._columns = columns
+    
+    def fit(self, X, y=None, cols=None):
+        return self
+    
+    def transform(self, X, y=None, cols=None):
+        X = X.copy()
+        if cols == None:
+            return pd.get_dummies(X)
+        else:
+            return pd.get_dummies(X, columns=cols)
+
+
+class MostFreqImputer(BaseEstimator, TransformerMixin):
+    # # City (feature)
+    # Splitting data into categories
+    def fit(self, X, y=None):
+        mask = X.notna()
+        notna = X[mask]
+        self.most_frequent_ = notna.mode()  # returns most frequent element
+        
+        return self
+    
+    def transform(self, X, y=None):
+        # splits cities into groups depending on the number of citizens
+        # replaces NaN values with random not NaN values in City feature
+        X = X.copy()
+        X = X.fillna(self.most_frequent_, axis=0)
+        return X
+
+
 class LabelEncoderNew(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
@@ -28,14 +62,17 @@ class LabelEncoderNew(BaseEstimator, TransformerMixin):
         
         return X
 
-class BinEncoder(BaseEstimator, TransformerMixin):
+
+class BinaryEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         self.tests = {}
-        return self
-
-    def transform(self, X, y=None):
         for col in X.columns:
             self.tests[col] = X[col][1]
+        
+        return self
+    
+    def transform(self, X, y=None):
+        
         X = X.copy()
         for k, v in self.tests.items():
             X[k] = (X[k] == v).astype(int)
@@ -73,7 +110,7 @@ class City(BaseEstimator, TransformerMixin):
         
         mask = city_cut.notna()
         notna = city_cut[mask]
-        self.most_frequent_ = notna.mode()[0]  # areturns most frequent element
+        self.most_frequent_ = notna.mode()[0]  # returns most frequent element
         
         return self
     
@@ -107,16 +144,16 @@ class Income(BaseEstimator, TransformerMixin):
     # # checking outliers for this feature
     # px.line(data.Monthly_Income.quantile(np.arange(0,1,0.01))).show('browser')  # based on plot we take 95 percentile
     # # changing outliers to the value of 95th percentile
-    
+
     def fit(self, X, y=None):
-        self.mask_ = X.Monthly_Income > X.Monthly_Income.quantile(0.95)
-        self.monthly_income_ = X.Monthly_Income.quantile(0.95)
-        
+        self._mask = X.Monthly_Income > X.Monthly_Income.quantile(0.95)
+        self._monthly_income = X.Monthly_Income.quantile(0.95)
+    
         return self
     
     def transform(self, X, y=None):
         X = X.copy()
-        X.Monthly_Income[self.mask_] = self.monthly_income_
+        X.Monthly_Income[self._mask] = self._monthly_income
         return X
 
 
@@ -124,10 +161,19 @@ class BackToDf(BaseEstimator, TransformerMixin):
     def __init__(self, columns):
         super().__init__()
         self._columns = columns
-    
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        df = pd.DataFrame(X, columns=self._columns)
+        return df
+
+
+class ToDf(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
     
     def transform(self, X, y=None):
-        df = pd.DataFrame(X, columns=self._columns)
+        df = pd.DataFrame(X)
         return df

@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline, FeatureUnion
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 import classes
 
@@ -54,9 +54,9 @@ binary_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(binary_features)),
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("back_to_df", classes.BackToDf(binary_features)),
-    ("bin", classes.BinEncoder()),
+    ("bin", classes.BinaryEncoder()),
 ])
-# binary_pipeline.fit_transform(X_train)
+lol = binary_pipeline.fit_transform(X_train)
 
 #
 # # Dealing with numerical features, standarization
@@ -82,36 +82,41 @@ num_pipeline = Pipeline([
 
 to_one_hot = ['Var1', 'Var2', 'Var4']
 
+# working for now
 cat_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(to_one_hot)),
-    ("impute", SimpleImputer(strategy="most_frequent")),
-    ("cat_encoder", OneHotEncoder(sparse=False, handle_unknown='ignore')),
+    ("impute", classes.MostFreqImputer()),
+    ("cat_encoder", classes.MyOneHotEncoder()),
 ])
-# cat_pipeline.fit_transform(X_train)
+# cat_lol = cat_pipeline.fit_transform(X_train)
 
+# working for now
 city_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(['City'])),
     ("city", classes.City()),
-    ("impute", SimpleImputer(strategy="most_frequent")),
-    ("cat_encoder", OneHotEncoder(sparse=False, handle_unknown='ignore')),
+    ("cat_encoder", classes.MyOneHotEncoder()),
 ])
-# city_pipeline.fit_transform(X_train)
+# city_lol = city_pipeline.fit_transform(X_train)
 
+# working for now
 source_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(['Source'])),
     ("source", classes.Source()),
     ("impute", SimpleImputer(strategy="most_frequent")),
-    ("cat_encoder", OneHotEncoder(sparse=False, handle_unknown='ignore')),
+    ("to_df", classes.BackToDf(['Source'])),
+    ("cat_encoder", classes.MyOneHotEncoder()),
 ])
-# source_pipeline.fit_transform(X_train)
+# yolo = source_pipeline.fit_transform(X_train)
 
+# working for now
 income_pipeline = Pipeline([
     ("select_cat", classes.DataFrameSelector(['Monthly_Income'])),
     ("income", classes.Income()),
     ("impute", SimpleImputer(strategy="median")),
     ("scaler", StandardScaler()),
+    ("to_df", classes.BackToDf(['Monthly_Income'])),
 ])
-# income_pipeline.fit_transform(X_train)
+# income_lol = income_pipeline.fit_transform(X_train)
 
 preprocess_pipeline = FeatureUnion(transformer_list=[
     ("bin_pipeline", binary_pipeline),
@@ -123,34 +128,38 @@ preprocess_pipeline = FeatureUnion(transformer_list=[
 ])
 
 X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
+pd.DataFrame(X_train_prep_filled).to_csv('final.csv')
 
 # # #
 # # # # Machine Learning Part
 # # #
 
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
+model = DecisionTreeClassifier()
+model.fit(X_train_prep_filled, y_train)
+print(model.score(preprocess_pipeline.fit_transform(X_test), y_test))
+
 # # CV
-seed = 123
-kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
+# seed = 123
+# kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
 
 # # DecisionTreeClassifier
-from imblearn.pipeline import Pipeline
+# from imblearn.pipeline import Pipeline
+#
+# pipe = Pipeline([
+#     ('preprocessing', preprocess_pipeline),
+#     ('classifier', DecisionTreeClassifier()),
+# ])
+#
+#
+# param_grid = {
+#     'classifier__max_features': [1,100]
+# }
 
-pipe = Pipeline([
-    ('preprocessing', preprocess_pipeline),
-    ('classifier', DecisionTreeClassifier()),
-])
-
-param_grid = {
-    'classifier__max_features': [1, 5, 10]
-}
-
-grid_1 = GridSearchCV(pipe, param_grid, cv=kfold)
-grid_1.fit(X_train, y_train)
-print(grid_1.best_params_)
+# grid_1 = GridSearchCV(pipe, param_grid, cv=kfold)
+# grid_1.fit(X_train, y_train)
+# print(grid_1.best_params_)
 
 # #
 # # # RandomForestClassifier
