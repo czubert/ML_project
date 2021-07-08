@@ -138,7 +138,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 model = DecisionTreeClassifier()
 model.fit(X_train_prep_filled, y_train)
-print(model.score(preprocess_pipeline.fit_transform(X_test), y_test))
+print(model.score(preprocess_pipeline.transform(X_test), y_test))
 
 # # CV
 # seed = 123
