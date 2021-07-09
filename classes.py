@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
 
 
 # A class to select numerical or categorical columns
@@ -17,19 +18,19 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
 
 
 class MyOneHotEncoder(BaseEstimator, TransformerMixin):
-    # def __init__(self, columns):
-    #     super().__init__()
-    #     self._columns = columns
+    def __init__(self):
+        super().__init__()
+        self._encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
     
     def fit(self, X, y=None, cols=None):
+        self._encoder.fit(X)
         return self
     
-    def transform(self, X, y=None, cols=None):
+    def transform(self, X, y=None):
         X = X.copy()
-        if cols == None:
-            return pd.get_dummies(X)
-        else:
-            return pd.get_dummies(X, columns=cols)
+        X = self._encoder.transform(X)
+        X = pd.DataFrame(X, columns=self._encoder.get_feature_names())
+        return X
 
 
 class MostFreqImputer(BaseEstimator, TransformerMixin):
@@ -78,21 +79,6 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             X[k] = (X[k] == v).astype(int)
     
         return X
-
-
-# class BinEncoder(BaseEstimator, TransformerMixin):
-#     def fit(self, X, y=None):
-#         tests = {}
-#         for col in X.columns:
-#             tests[col] = X[col][1]
-#
-#         for k, v in tests.items():
-#             X[k] = (X[k] == v).astype(int)
-#         return self
-#
-#     def transform(self, X, y=None):
-#
-#         return X
 
 
 # Finished works good
@@ -146,14 +132,14 @@ class Income(BaseEstimator, TransformerMixin):
     # # changing outliers to the value of 95th percentile
 
     def fit(self, X, y=None):
-        self._mask = X.Monthly_Income > X.Monthly_Income.quantile(0.95)
         self._monthly_income = X.Monthly_Income.quantile(0.95)
     
         return self
     
     def transform(self, X, y=None):
         X = X.copy()
-        X.Monthly_Income[self._mask] = self._monthly_income
+        mask = X.Monthly_Income > X.Monthly_Income.quantile(0.95)
+        X.Monthly_Income[mask] = self._monthly_income
         return X
 
 
