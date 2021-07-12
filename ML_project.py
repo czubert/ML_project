@@ -49,4 +49,13 @@ X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
 #
 # # Machine Learning
 #
-estimators.get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test)
+ml_variables = {
+    'preprocess_pipeline': preprocess_pipeline,
+    'X_train': X_train,
+    'X_test': X_test,
+    'y_train': y_train,
+    'y_test': y_test,
+    'k_best': 50,
+}
+
+report, models = estimators.get_best_classsifier(**ml_variables)
