@@ -82,30 +82,30 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
     final_report = {}
     models = {}
     
-    for classifier in classifiers:
+    for key, value in classifiers.items():
         tmp_pipe = Pipeline([
             # ('final_processing', final_processing_pipe),
             ('preprocessing', preprocess_pipeline),
-            ('sampling', ADASYN(random_state=55)),
+            # ('sampling', ADASYN(random_state=55)),
             ('selector', SelectKBest(k=k_best)),
-            ('decomposition', PCA()),
-            ('classifier', classifiers[classifier]['estimator'])
+            # ('decomposition', PCA()),
+            ('classifier', value['estimator'])
         ])
-        
-        grid = GridSearchCV(tmp_pipe, classifiers[classifier]['params'], cv=kfold)
+    
+        grid = GridSearchCV(tmp_pipe, value['params'], cv=kfold)
         grid.fit(X_train, y_train)
-        
+    
         # Show the classification report
+        report = classification_report_imbalanced(y_test, grid.best_estimator_.predict(X_test))
+    
         print(f'')
-        print(f'Classfier:\n{classifiers[classifier]["name"]}\n'
+        print(f'Classfier:\n{value["name"]}\n'
               f'Best params:\n'
               f'{grid.best_params_}\n'
-              f'{classifiers[classifier]["name"]} performance report:\n'
-              f'{classification_report_imbalanced(y_test, grid.best_estimator_.predict(X_test))}')
-        
-        report = classification_report_imbalanced(y_test, grid.best_estimator_.predict(X_test))
-        
-        final_report[classifiers[classifier]['name']] = {'best_params': grid.best_params_, 'report': report}
-        models[classifiers[classifier]['name']] = [grid]
+              f'{value["name"]} performance report:\n'
+              f'{report}')
+    
+        final_report[value['name']] = {'best_params': grid.best_params_, 'report': report}
+        models[value['name']] = [grid]
     
     return final_report, models

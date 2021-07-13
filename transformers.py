@@ -1,6 +1,7 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
+
+
 class BinaryEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         self.tests = {}

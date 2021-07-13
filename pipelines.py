@@ -19,8 +19,6 @@ binary_pipeline = Pipeline([
     ("back_to_df", utils.BackToDf(binary_features)),
     ("bin", transformers.BinaryEncoder()),  # takes df with features of two values and returns df with binary values
 ])
-# # for testing
-# lol = binary_pipeline.fit_transform(X_train)
 
 # # # #
 # # # Numerical features
@@ -38,8 +36,6 @@ num_pipeline = Pipeline([
     ("scaler", StandardScaler(with_mean=False)),
     ("back_to_df", utils.BackToDf(numerical_features))
 ])
-# # for testing
-# num_pipe = num_pipeline.fit_transform(X_train)
 
 # # # #
 # # # Categorical features
@@ -51,8 +47,6 @@ cat_pipeline = Pipeline([
     ("impute", utils.MostFreqImputer()),
     ("cat_encoder", utils.MyOneHotEncoder()),
 ])
-# # for testing
-# cat_lol = cat_pipeline.fit_transform(X_train)
 
 # # # #
 # # # DOB feature
@@ -65,8 +59,6 @@ dob_pipeline = Pipeline([
     ("scaler", StandardScaler(with_mean=False)),
     ("back_to_df", utils.BackToDf('Age'))
 ])
-# # for testing
-# dob_lol = dob_pipeline.fit_transform(X_train)
 
 
 # # # #
@@ -80,8 +72,6 @@ submitted_pipeline = Pipeline([
     ("impute", SimpleImputer(strategy="median")),
     ("scaler", StandardScaler(with_mean=False)),
 ])
-# # for testing
-# emi_lol = submitted_pipeline.fit_transform(X_train)
 
 # # # #
 # # # City feature
@@ -93,8 +83,6 @@ city_pipeline = Pipeline([
     # maps cities names to labels based on the frequency and fill na with most frequent label
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
-# # for testing
-# city_lol = city_pipeline.fit_transform(X_train)
 
 # # # #
 # # # Source feature
@@ -107,8 +95,6 @@ source_pipeline = Pipeline([
     ("to_df", utils.BackToDf(['Source'])),
     ("cat_encoder", utils.MyOneHotEncoder()),
 ])
-# # for testing
-# source_lol = source_pipeline.fit_transform(X_train)
 
 # # # #
 # # # Income features
@@ -121,8 +107,6 @@ income_pipeline = Pipeline([
     ("scaler", StandardScaler()),
     ("to_df", utils.BackToDf(['Monthly_Income'])),
 ])
-# # for testing
-# income_lol = income_pipeline.fit_transform(X_train)
 
 
 def get_preprocessed_data(X_train=None):

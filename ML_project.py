@@ -1,7 +1,10 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import shutup;
 
-import preprocessing  # importing pipelines module responsible for preprocessing
+shutup.please()
+
+import pipelines  # importing pipelines module responsible for preprocessing
 import estimators  # importing module with loop for estimators testing
 
 # results obtained by LazyPredict
@@ -64,7 +67,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_
 #
 # # Preprocessing data
 #
-preprocess_pipeline = preprocessing.get_preprocessed_data(X_train)
+preprocess_pipeline = pipelines.get_preprocessed_data(X_train)
 # X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
 
 #
