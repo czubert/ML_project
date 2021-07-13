@@ -10,7 +10,7 @@ import transformers
 # # # Binary features
 # #
 #
-# WHAT should I prepare data in case of NaN?
+# WHAT: should I prepare data in case of NaN?
 
 binary_features = ['Gender', 'Mobile_Verified', 'Filled_Form', 'Device_Type']
 binary_pipeline = Pipeline([
@@ -30,9 +30,8 @@ binary_pipeline = Pipeline([
 # TODO probably should be changed to mean or mode
 # TODO check if standard scaler or normalization is better for the data
 
-numerical_features = ['Loan_Amount_Submitted', 'Loan_Tenure_Submitted', 'Loan_Amount_Applied',
-                      'Loan_Tenure_Applied', 'Var5', 'EMI_Loan_Submitted', 'Processing_Fee',
-                      'Interest_Rate', 'Monthly_Income']
+numerical_features = ['Loan_Amount_Applied', 'Loan_Tenure_Applied', 'Var5',
+                      'Processing_Fee', 'Interest_Rate', 'Monthly_Income']
 num_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(numerical_features)),
     ("impute", SimpleImputer(strategy="median")),
@@ -54,6 +53,35 @@ cat_pipeline = Pipeline([
 ])
 # # for testing
 # cat_lol = cat_pipeline.fit_transform(X_train)
+
+# # # #
+# # # DOB feature
+# #
+#
+dob_pipeline = Pipeline([
+    ("select_cat", utils.DataFrameSelector(['DOB'])),
+    ("dob_to_age", transformers.DobToAge()),
+    ("impute", SimpleImputer(strategy="median")),
+    ("scaler", StandardScaler(with_mean=False)),
+    ("back_to_df", utils.BackToDf('Age'))
+])
+# # for testing
+# dob_lol = dob_pipeline.fit_transform(X_train)
+
+
+# # # #
+# # # Submitted feature
+# #
+#
+submitted_features = ['EMI_Loan_Submitted', 'Loan_Amount_Submitted', 'Loan_Tenure_Submitted', 'Processing_Fee']
+submitted_pipeline = Pipeline([
+    ("select_cat", utils.DataFrameSelector(submitted_features)),
+    ("submitted", transformers.Submitted()),
+    ("impute", SimpleImputer(strategy="median")),
+    ("scaler", StandardScaler(with_mean=False)),
+])
+# # for testing
+# emi_lol = submitted_pipeline.fit_transform(X_train)
 
 # # # #
 # # # City feature
@@ -105,6 +133,8 @@ def get_preprocessed_data(X_train=None):
     """
     preprocess_pipeline = FeatureUnion(transformer_list=[
         ("bin_pipeline", binary_pipeline),
+        ("dob_pipeline", city_pipeline),
+        ("submitted_pipeline", submitted_pipeline),
         ("city_pipeline", city_pipeline),
         ("source_pipeline", source_pipeline),
         ("income_pipeline", income_pipeline),

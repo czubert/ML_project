@@ -1,34 +1,61 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
-
-
-class LabelEncoderNew(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        X = X.copy()
-        for col in X.columns:
-            le = LabelEncoder()
-            X[col] = le.fit_transform(X[col])
-        
-        return X
-
-
 class BinaryEncoder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         self.tests = {}
         for col in X.columns:
             self.tests[col] = X[col][1]
-        
+
         return self
-    
+
     def transform(self, X, y=None):
-        
+    
         X = X.copy()
         for k, v in self.tests.items():
             X[k] = (X[k] == v).astype(int)
+    
+        return X
+
+
+class EmiLoanSubmitted(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        # applies 1 where there is data missing else 0
+        X['EMI_Loan_Submitted_Missing'] = X['EMI_Loan_Submitted'].apply(lambda x: 1 if pd.isnull(x) else 0)
+        # drop original variables:
+        X.drop('EMI_Loan_Submitted', axis=1, inplace=True)
+        
+        return X
+
+
+class Submitted(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        for col in X.columns:
+            # applies 1 where there is data missing else 0
+            # X[f'{col}_Missing'] = X[col].apply(lambda x: 1 if pd.isnull(x) else 0)
+            X.loc[:, f'{col}_Missing'] = X[col].apply(lambda x: 1 if pd.isnull(x) else 0)
+            
+            # drop original variables:
+            X.drop(col, axis=1, inplace=True)
+        
+        return X
+
+
+class DobToAge(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        # Create age variable:
+        X.loc[:, 'Age'] = X['DOB'].apply(lambda x: 115 - int(x[-2:]))
+        # drop DOB:
+        X.drop('DOB', axis=1, inplace=True)
         
         return X
 
