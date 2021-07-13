@@ -16,44 +16,45 @@ from sklearn.svm import SVC
 from imblearn.metrics import classification_report_imbalanced
 from imblearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE, ADASYN
+from imblearn.under_sampling import RandomUnderSampler
 
 # # CV
 seed = 123
 kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
 
 classifiers = {
-    'RF':
-        {
-            'name': 'Random Forest Classifier',
-            'estimator': RandomForestClassifier(),
-            'params':
-                {
-                    # 'classifier__n_estimators': [10,100,400],
-                    # 'classifier__criterion' :['gini', 'entropy'],
-                    # 'classifier__max_features': [0.25,0.5,0.75],
-                    'classifier__max_depth': [8],
-                    # 'selector__k' :[40,50,54],
-                }},
-    
-    #     'tree':
-    #         {
-    #             'name': 'Decision Tree Classifier',
-    #             'estimator': DecisionTreeClassifier(),
-    #             'params':
-    #                 {
-    #                     'classifier__max_features': [0.25, 0.5]
-    #                 }},
-    
-    # 'SVC':
+    # 'RF':
     #     {
-    #         'name': 'SVC classifier',
-    #         'estimator': SVC(),
+    #         'name': 'Random Forest Classifier',
+    #         'estimator': RandomForestClassifier(),
     #         'params':
     #             {
-    #                 # "classifier__kernel": ["poly"],
-    #                 "classifier__degree": [1, 2, 3],
-    #                 "classifier__C": [0.1, 1, 10]
+    #                 'classifier__n_estimators': [400],
+    #                 # 'classifier__criterion' :['gini', 'entropy'],
+    #                 # 'classifier__max_features': [0.25,0.5,0.75],
+    #                 'classifier__max_depth': [8],
+    #                 # 'selector__k' :[40,50,54],
     #             }},
+    #
+    # 'tree':
+    #     {
+    #         'name': 'Decision Tree Classifier',
+    #         'estimator': DecisionTreeClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__max_features': [0.25, 0.5]
+    #             }},
+    
+    'SVC':
+        {
+            'name': 'SVC classifier',
+            'estimator': SVC(),
+            'params':
+                {
+                    # "classifier__kernel": ["poly"],
+                    "classifier__degree": [1, 2, 3],
+                    "classifier__C": [0.1, 1, 10]
+                }},
     
     # 'XGB':
     #     {
@@ -86,12 +87,13 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
         tmp_pipe = Pipeline([
             # ('final_processing', final_processing_pipe),
             ('preprocessing', preprocess_pipeline),
-            # ('sampling', ADASYN(random_state=55)),
+            # ('sampling', ADASYN(random_state=k_best)),
+            ('sampling', RandomUnderSampler(random_state=40)),
             ('selector', SelectKBest(k=k_best)),
-            # ('decomposition', PCA()),
+            ('decomposition', PCA(10)),
             ('classifier', value['estimator'])
         ])
-    
+        # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
         grid = GridSearchCV(tmp_pipe, value['params'], cv=kfold)
         grid.fit(X_train, y_train)
     

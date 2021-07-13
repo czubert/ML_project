@@ -1,8 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import shutup;
-
-shutup.please()
+import shutup
+import warnings
 
 import pipelines  # importing pipelines module responsible for preprocessing
 import estimators  # importing module with loop for estimators testing
@@ -13,9 +12,14 @@ cols = df_fast_results.columns[:-1]
 df_fast_results['std'] = round(df_fast_results[cols].std(axis=1), 7)
 
 #
+# # warnings
+#
+shutup.please()
+warnings.filterwarnings("ignore")
+
+#
 # # Description of the data
 #
-
 """
 City values changed to 'S', 'M', 'B', 'L' depending on the occurrence
 DOB converted to Age | DOB dropped
@@ -62,7 +66,7 @@ y = data.Disbursed
 #
 # # Train, Test, Split
 #
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10000, random_state=42)
 
 #
 # # Preprocessing data
