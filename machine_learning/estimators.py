@@ -27,36 +27,35 @@ from sklearn.metrics import roc_auc_score
 # # CV
 seed = 123
 classifiers = {
-    # 'RF':
-    #     {
-    #         'name': 'Random Forest Classifier',
-    #         'estimator': RandomForestClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [250],
-    #                 'classifier__criterion' :['gini'],
-    #                 'classifier__max_features': [0.1],
-    #                 'classifier__max_depth': [16],
-    #                 'classifier__max_leaf_nodes': [30],
-    #                 'selector__k' :[20],
-    #             }},
-    
-    'tree':
+    'RF':
         {
-            'name': 'Decision Tree Classifier',
-            'estimator': DecisionTreeClassifier(),
+            'name': 'Random Forest Classifier',
+            'estimator': RandomForestClassifier(),
             'params':
                 {
-                    'classifier__max_features': [0.25],
-                    # 'classifier__max_features': ['auto', 'sqrt', 'log2'],
-                    'classifier__max_depth': [1, 2, 5],
+                    'classifier__n_estimators': [250],
                     'classifier__criterion': ['gini'],
-                    # 'classifier__max_leaf_nodes': [1,10,100],
-                    # 'classifier__min_weight_fraction_leaf': [0, 1,10,100],
-                    # 'classifier__min_samples_split': [0.1, 1,2,10,100],
-                    
-                    'selector__k': [40, 50, 60],
+                    'classifier__max_features': [0.1],
+                    'classifier__max_depth': [16],
+                    'classifier__max_leaf_nodes': [30],
+                    'selector__k': [20],
                 }},
+    
+    # 'tree':
+    #     {
+    #         'name': 'Decision Tree Classifier',
+    #         'estimator': DecisionTreeClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__max_features': [0.1,0.3,0.5],
+    #                 'classifier__max_depth': [5,6,7,10,15],
+    #                 'classifier__criterion': ['gini'],
+    #                 'classifier__max_leaf_nodes': [50, 100],
+    #                 'classifier__min_weight_fraction_leaf': [0, 1,10,100],
+    #                 'classifier__min_samples_split': [0.1, 1,2,10,100],
+    #
+    #                 'selector__k': [40],
+    #             }},
     
     # 'Logistiic':
     #     {
@@ -108,7 +107,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
     #     ('decomposition', PCA()),
     # ])
 
-    score = {}
+    scores = {}
     models = {}
     
     for key, value in classifiers.items():
@@ -118,7 +117,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
             # ('sampling', ADASYN(random_state=k_best)),
             ('sampling', RandomUnderSampler(random_state=40)),
             ('selector', SelectKBest()),
-            ('decomposition', PCA(10)),
+            ('decomposition', PCA(20)),
             ('classifier', value['estimator'])
         ])
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
@@ -128,11 +127,11 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
         roc_auc_score_train = roc_auc_score(y_train, grid.predict_proba(X_train)[:, 1])
         roc_auc_score_test = roc_auc_score(y_test, grid.predict_proba(X_test)[:, 1])
 
-        score[value['name']] = {
+        scores[value['name']] = {
             'best_params': grid.best_params_,
             'roc_auc_score_train_test': (roc_auc_score_train, roc_auc_score_test)
         }
 
         models[value['name']] = [grid.best_estimator_]
 
-    return score, models
+    return scores, models

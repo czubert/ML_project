@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import pipelines  # importing pipelines module responsible for preprocessing
-import estimators  # importing module with loop for estimators testing
+from machine_learning import pipelines, estimators, utils, transformers
 
 #
 # # warnings
@@ -26,9 +25,7 @@ City values changed to 'S', 'M', 'B', 'L' depending on the occurrence
 DOB converted to Age | DOB dropped
 
 Dropped:
-EmployerName dropped because of too many categories
 ID dropped - not relevant
-Salary_Account dropped - not relevant
 Lead_Creation_Date dropped because made little intuitive impact on outcome
 LoggedIn, Salary_Account dropped
 
@@ -45,6 +42,8 @@ Original variable Loan_Tenure_Submitted dropped
 Processing_Fee_Missing created which is 1 if Processing_Fee was missing else 0 |
 Original variable Processing_Fee dropped
 Source – top 2 kept as is and all others combined into different category
+Employer_Name – top n values kept as is and all others combined into different category
+Salary_Account – top n values kept as is and all others combined into different category
 Numerical and One-Hot-Coding performed
 """
 
@@ -59,7 +58,7 @@ data = pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
 #
 # # Getting rid of irrelevant features
 #
-irrelevant_features = ['Lead_Creation_Date', 'ID', 'Employer_Name', 'Salary_Account', 'LoggedIn']
+irrelevant_features = ['Lead_Creation_Date', 'ID', 'LoggedIn']
 data = data.drop(irrelevant_features, axis=1)  # drops features that have no impact on model
 data = data.dropna(subset=["Loan_Amount_Applied"])  # drops variables where Loan_Amount_applied is NaN
 
@@ -89,7 +88,9 @@ ml_variables = {
     'X_test': X_test,
     'y_train': y_train,
     'y_test': y_test,
-    'k_best': 50,
+    'k_best': 100,
 }
 
-score, models = estimators.get_best_classsifier(**ml_variables)
+scores, models = estimators.get_best_classsifier(**ml_variables)
+
+pd.DataFrame(scores).to_csv('downloads/scores.csv')

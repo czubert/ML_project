@@ -78,7 +78,7 @@ class City(BaseEstimator, TransformerMixin):
         self.most_frequent_ = notna.mode()[0]  # returns most frequent element
         
         return self
-    
+
     def transform(self, X, y=None):
         # splits cities into groups depending on the number of citizens
         # replaces NaN values with random not NaN values in City feature
@@ -86,6 +86,37 @@ class City(BaseEstimator, TransformerMixin):
         X.loc[:, 'City'] = (X['City'].map(self.replace_data_)
                             .fillna(self.most_frequent_)
                             )
+        return X
+
+
+class SalaryAcc(BaseEstimator, TransformerMixin):
+    # # Source (feature)
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        X = X.copy()
+        salary_acc = X.Salary_Account.value_counts(dropna=False)
+        salary_acc_rare = list(salary_acc[salary_acc < 100].index)
+        mask = X['Salary_Account'].isin(salary_acc_rare)
+        X.loc[mask, "Salary_Account"] = "Other"
+        
+        return X
+
+
+class EmpName(BaseEstimator, TransformerMixin):
+    # # Source (feature)
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        X = X.copy()
+        
+        empnames = X.Employer_Name.value_counts(dropna=False)
+        empnames_rare = list(empnames[empnames < 30].index)
+        mask = X['Employer_Name'].isin(empnames_rare)
+        X.loc[mask, "Employer_Name"] = "Other"
+        
         return X
 
 

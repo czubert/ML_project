@@ -4,8 +4,7 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.preprocessing import StandardScaler
 
 # Importing inner modules
-import utils
-import transformers
+from machine_learning import utils, transformers
 
 # # # #
 # # # Binary features
@@ -86,6 +85,28 @@ city_pipeline = Pipeline([
 ])
 
 # # # #
+# # # Salary_Account feature
+# #
+#
+salary_acc_pipeline = Pipeline([
+    ("select_cat", utils.DataFrameSelector(['Salary_Account'])),
+    ("salary_acc", transformers.SalaryAcc()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
+    ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
+])
+
+# # # #
+# # # Employer_Name feature
+# #
+#
+emp_name = Pipeline([
+    ("select_cat", utils.DataFrameSelector(['Employer_Name'])),
+    ("salary_acc", transformers.EmpName()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
+    ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
+])
+
+# # # #
 # # # Source feature
 # #
 #
@@ -120,6 +141,8 @@ def get_preprocessed_data(X_train=None):
         ("bin_pipeline", binary_pipeline),
         ("dob_pipeline", city_pipeline),
         ("submitted_pipeline", submitted_pipeline),
+        ("salary_pipeline", salary_acc_pipeline),
+        ("emp_name", emp_name),
         ("city_pipeline", city_pipeline),
         ("source_pipeline", source_pipeline),
         ("income_pipeline", income_pipeline),
