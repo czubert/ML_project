@@ -1,10 +1,16 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import pipelines  # importing pipelines module responsible for preprocessing
+import estimators  # importing module with loop for estimators testing
+
+#
+# # warnings
+#
 import shutup
 import warnings
 
-import pipelines  # importing pipelines module responsible for preprocessing
-import estimators  # importing module with loop for estimators testing
+shutup.please()
+warnings.filterwarnings("ignore")
 
 # results obtained by LazyPredict
 df_fast_results = pd.read_csv('models.csv')
@@ -12,14 +18,9 @@ cols = df_fast_results.columns[:-1]
 df_fast_results['std'] = round(df_fast_results[cols].std(axis=1), 7)
 
 #
-# # warnings
+# # Processing data description
 #
-shutup.please()
-warnings.filterwarnings("ignore")
 
-#
-# # Description of the data
-#
 """
 City values changed to 'S', 'M', 'B', 'L' depending on the occurrence
 DOB converted to Age | DOB dropped
@@ -32,12 +33,17 @@ Lead_Creation_Date dropped because made little intuitive impact on outcome
 LoggedIn, Salary_Account dropped
 
 Existing_EMI imputed with 0 (median) since only 111 values were missing
-Interest_Rate_Missing created which is 1 if Interest_Rate was missing else 0 | Original variable Interest_Rate dropped
+Interest_Rate_Missing created which is 1 if Interest_Rate was missing else 0 |
+Original variable Interest_Rate dropped
 Loan_Amount_Applied, Loan_Tenure_Applied imputed with median values
-EMI_Loan_Submitted_Missing created which is 1 if EMI_Loan_Submitted was missing else 0 | Original variable EMI_Loan_Submitted dropped
-Loan_Amount_Submitted_Missing created which is 1 if Loan_Amount_Submitted was missing else 0 | Original variable Loan_Amount_Submitted dropped
-Loan_Tenure_Submitted_Missing created which is 1 if Loan_Tenure_Submitted was missing else 0 | Original variable Loan_Tenure_Submitted dropped
-Processing_Fee_Missing created which is 1 if Processing_Fee was missing else 0 | Original variable Processing_Fee dropped
+EMI_Loan_Submitted_Missing created which is 1 if EMI_Loan_Submitted was missing else 0 |
+Original variable EMI_Loan_Submitted dropped
+Loan_Amount_Submitted_Missing created which is 1 if Loan_Amount_Submitted was missing else 0 |
+Original variable Loan_Amount_Submitted dropped
+Loan_Tenure_Submitted_Missing created which is 1 if Loan_Tenure_Submitted was missing else 0 |
+Original variable Loan_Tenure_Submitted dropped
+Processing_Fee_Missing created which is 1 if Processing_Fee was missing else 0 |
+Original variable Processing_Fee dropped
 Source – top 2 kept as is and all others combined into different category
 Numerical and One-Hot-Coding performed
 """
@@ -58,7 +64,7 @@ data = data.drop(irrelevant_features, axis=1)  # drops features that have no imp
 data = data.dropna(subset=["Loan_Amount_Applied"])  # drops variables where Loan_Amount_applied is NaN
 
 #
-# # getting X and y 
+# # getting X and y
 #
 X = data.drop(['Disbursed'], axis=1)
 y = data.Disbursed
@@ -86,4 +92,4 @@ ml_variables = {
     'k_best': 50,
 }
 
-report, models = estimators.get_best_classsifier(**ml_variables)
+score, models = estimators.get_best_classsifier(**ml_variables)

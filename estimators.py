@@ -11,6 +11,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from xgboost.sklearn import XGBClassifier
 from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
 
 # imblearn
 from imblearn.metrics import classification_report_imbalanced
@@ -18,10 +20,12 @@ from imblearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE, ADASYN
 from imblearn.under_sampling import RandomUnderSampler
 
+# metrics
+from sklearn.metrics import auc
+from sklearn.metrics import roc_auc_score
+
 # # CV
 seed = 123
-kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
-
 classifiers = {
     # 'RF':
     #     {
@@ -29,46 +33,70 @@ classifiers = {
     #         'estimator': RandomForestClassifier(),
     #         'params':
     #             {
-    #                 'classifier__n_estimators': [400],
-    #                 # 'classifier__criterion' :['gini', 'entropy'],
-    #                 # 'classifier__max_features': [0.25,0.5,0.75],
-    #                 'classifier__max_depth': [8],
-    #                 # 'selector__k' :[40,50,54],
-    #             }},
-    #
-    # 'tree':
-    #     {
-    #         'name': 'Decision Tree Classifier',
-    #         'estimator': DecisionTreeClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__max_features': [0.25, 0.5]
+    #                 'classifier__n_estimators': [250],
+    #                 'classifier__criterion' :['gini'],
+    #                 'classifier__max_features': [0.1],
+    #                 'classifier__max_depth': [16],
+    #                 'classifier__max_leaf_nodes': [30],
+    #                 'selector__k' :[20],
     #             }},
     
-    'SVC':
+    'tree':
         {
-            'name': 'SVC classifier',
-            'estimator': SVC(),
+            'name': 'Decision Tree Classifier',
+            'estimator': DecisionTreeClassifier(),
             'params':
                 {
-                    # "classifier__kernel": ["poly"],
-                    "classifier__degree": [1, 2, 3],
-                    "classifier__C": [0.1, 1, 10]
+                    'classifier__max_features': [0.25],
+                    # 'classifier__max_features': ['auto', 'sqrt', 'log2'],
+                    'classifier__max_depth': [1, 2, 5],
+                    'classifier__criterion': ['gini'],
+                    # 'classifier__max_leaf_nodes': [1,10,100],
+                    # 'classifier__min_weight_fraction_leaf': [0, 1,10,100],
+                    # 'classifier__min_samples_split': [0.1, 1,2,10,100],
+                    
+                    'selector__k': [40, 50, 60],
                 }},
     
-    # 'XGB':
+    # 'Logistiic':
     #     {
-    #         'name': 'XGBoost Classifier',
-    #         'estimator': XGBClassifier(),
+    #         'name': 'Logistic regression',
+    #         'estimator': LogisticRegression(),
     #         'params':
     #             {
-    #                 'classifier__n_estimators': [100,200],
-    #                 'classifier__max_depth': [10,50,100],
-    #                 'classifier__gamma':[1],
-    #                 'classifier__reg_alpha': [0],
-    #                 'classifier__reg_lambda': [0.2],
+    #                 "classifier__class_weight": [None, 'balanced',{1:[1,10,100], 0:[1,10,100]}],
+    #                 "classifier__C": [0.1,1,10,100],
+    #                 "classifier__penalty": ['l1', 'l2', 'elasticnet', 'none'],
+    #                 'selector__k': [40,50,60],
+    #             }},
+    #
+    #     'XGB':
+    #         {
+    #             'name': 'XGBoost Classifier',
+    #             'estimator': XGBClassifier(),
+    #             'params':
+    #                 {
+    #                     'classifier__n_estimators': [100,200],
+    #                     'classifier__max_depth': [10,50,100],
+    #                     'classifier__gamma':[1],
+    #                     'classifier__reg_alpha': [0],
+    #                     'classifier__reg_lambda': [0.2],
+    #                 }},
+    #
+    # 'SVC':
+    #     {
+    #         'name': 'SVC classifier',
+    #         'estimator': SVC(),
+    #         'params':
+    #             {
+    #                 # "classifier__kernel": ["poly"],
+    #                 "classifier__degree": [1, 2, 3],
+    #                 "classifier__C": [0.1, 1, 10],
+    #                 'selector__k': [40,50,60],
     #             }},
 }
+kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
+
 
 
 def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, k_best):
@@ -79,8 +107,8 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
     #     ('selector', SelectKBest(k=k_best)),
     #     ('decomposition', PCA()),
     # ])
-    
-    final_report = {}
+
+    score = {}
     models = {}
     
     for key, value in classifiers.items():
@@ -89,25 +117,22 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
             ('preprocessing', preprocess_pipeline),
             # ('sampling', ADASYN(random_state=k_best)),
             ('sampling', RandomUnderSampler(random_state=40)),
-            ('selector', SelectKBest(k=k_best)),
+            ('selector', SelectKBest()),
             ('decomposition', PCA(10)),
             ('classifier', value['estimator'])
         ])
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
         grid = GridSearchCV(tmp_pipe, value['params'], cv=kfold)
         grid.fit(X_train, y_train)
-    
-        # Show the classification report
-        report = classification_report_imbalanced(y_test, grid.best_estimator_.predict(X_test))
-    
-        print(f'')
-        print(f'Classfier:\n{value["name"]}\n'
-              f'Best params:\n'
-              f'{grid.best_params_}\n'
-              f'{value["name"]} performance report:\n'
-              f'{report}')
-    
-        final_report[value['name']] = {'best_params': grid.best_params_, 'report': report}
-        models[value['name']] = [grid]
-    
-    return final_report, models
+
+        roc_auc_score_train = roc_auc_score(y_train, grid.predict_proba(X_train)[:, 1])
+        roc_auc_score_test = roc_auc_score(y_test, grid.predict_proba(X_test)[:, 1])
+
+        score[value['name']] = {
+            'best_params': grid.best_params_,
+            'roc_auc_score_train_test': (roc_auc_score_train, roc_auc_score_test)
+        }
+
+        models[value['name']] = [grid.best_estimator_]
+
+    return score, models

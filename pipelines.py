@@ -1,3 +1,4 @@
+import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.preprocessing import StandardScaler
@@ -125,8 +126,9 @@ def get_preprocessed_data(X_train=None):
         ("cat_pipeline", cat_pipeline),
         ("num_pipeline", num_pipeline),
     ])
-    
+
     # # for testing
     # X_train_prep_filled2 = preprocess_pipeline.fit_transform(X_train)
-    
+    # colnames = preprocess_pipeline.get_feature_names()
+
     return preprocess_pipeline
