@@ -33,12 +33,15 @@ classifiers = {
             'estimator': RandomForestClassifier(),
             'params':
                 {
-                    'classifier__n_estimators': [250],
-                    'classifier__criterion': ['gini'],
+                    'classifier__n_estimators': [250, 300, 360, 500],
+                    'classifier__criterion': ['gini', 'entropy'],
                     'classifier__max_features': [0.1],
-                    'classifier__max_depth': [16],
+                    'classifier__max_depth': [5, 9, 12, 16, 20],
                     'classifier__max_leaf_nodes': [30],
-                    'selector__k': [20],
+                    'classifier__min_samples_split': [1, 2, 3, 4],
+                    'classifier__bootstrap': [True, False],
+                    # 'classifier__n_jobs': [None, -1],
+                    # 'selector__k': [20],
                 }},
     
     # 'tree':
@@ -97,8 +100,7 @@ classifiers = {
 kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
 
 
-
-def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, k_best):
+def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
     # TODO make preprocessing adasyn etc before the loop, not to repeat this fo each estimators
     # final_processing_pipe = Pipeline([
     #     ('preprocessing', preprocess_pipeline),
@@ -106,7 +108,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
     #     ('selector', SelectKBest(k=k_best)),
     #     ('decomposition', PCA()),
     # ])
-
+    
     scores = {}
     models = {}
     
@@ -116,8 +118,8 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test, 
             ('preprocessing', preprocess_pipeline),
             # ('sampling', ADASYN(random_state=k_best)),
             ('sampling', RandomUnderSampler(random_state=40)),
-            ('selector', SelectKBest()),
-            ('decomposition', PCA(20)),
+            # ('selector', SelectKBest()),
+            # ('decomposition', PCA(20)),
             ('classifier', value['estimator'])
         ])
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?

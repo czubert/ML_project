@@ -76,6 +76,8 @@ Original variable Loan_Amount_Submitted dropped
 Original variable Loan_Tenure_Submitted dropped
 <u>Processing_Fee_Missing</u> created which is 1 if Processing_Fee was missing else 0 | \
 Original variable Processing_Fee dropped
+<u>Employer_Name</u> – top n values kept as is and all others combined into different category
+<u>Salary_Account</u> – top n values kept as is and all others combined into different category
 <u>Source</u> – top 2 kept as is and all others combined into different category
 Numerical and One-Hot-Coding performed
 """

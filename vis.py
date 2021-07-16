@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_app import descriptions
+from streamlit_app import descriptions, sidebar
 
 
 def main():
@@ -8,14 +8,15 @@ def main():
     :return:
     """
     
-    #
-    # # Streamlit settings
+    # # # #
+    # # # Streamlit settings
+    # #
     #
     st.set_page_config(
         layout="wide",  # Can be "centered" or "wide". In the future also "dashboard", etc.
         initial_sidebar_state="auto",  # Can be "auto", "expanded", "collapsed"
         page_title='MachineLearning project kodolamacz bootcamp',  # String or None.
-        page_icon=None,  # String, anything supported by st.image, or None.
+        page_icon="streamlit_app/media/icon_nobg.png",  # String, anything supported by st.image, or None.
     )
     
     st.markdown("""
@@ -30,16 +31,18 @@ def main():
                 }
                 </style>
                 """, unsafe_allow_html=True)
-
+    
     # # # #
     # # # Main Page
     # #
     #
-    st.markdown('<h2><center>Final project</center></h2>', unsafe_allow_html=True)
-    st.markdown('<p class="font"><center>Bootcamp "Data Scince" by Kodolamacz, Sages</center></h4>',
-                unsafe_allow_html=True)
+    
+    # Project logo
+    html_code = sidebar.show_logo()
+    st.markdown(html_code, unsafe_allow_html=True)
+    
     #
-    # # Data Description
+    # # Problem Description
     #
     outcome_exp = st.beta_expander(label='Task description')
     with outcome_exp:
@@ -47,12 +50,19 @@ def main():
             st.markdown(f'<p class="descr">{el}</p>', unsafe_allow_html=True)
         for i, el in enumerate(descriptions.data_dscr_list):
             st.markdown(f'<p class="font">{el}</p>', unsafe_allow_html=True)
-
+    
+    #
+    # # Preprocessing Description
+    #
     preprocess_exp = st.beta_expander(label='Show description of data preprocessing')
     with preprocess_exp:
         for el in descriptions.preprocessing_descr_list:
             st.markdown(f'<p class="font">{el}</p>', unsafe_allow_html=True)
-
+    
+    #
+    # # Sidebar
+    #
+    st.sidebar.write('qwe')
 
 if __name__ == '__main__':
     try:

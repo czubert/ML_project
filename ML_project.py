@@ -88,7 +88,6 @@ ml_variables = {
     'X_test': X_test,
     'y_train': y_train,
     'y_test': y_test,
-    'k_best': 100,
 }
 
 scores, models = estimators.get_best_classsifier(**ml_variables)

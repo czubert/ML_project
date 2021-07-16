@@ -1,3 +1,3 @@
 ,Random Forest Classifier
-best_params,"{'classifier__criterion': 'gini', 'classifier__max_depth': 16, 'classifier__max_features': 0.1, 'classifier__max_leaf_nodes': 30, 'classifier__n_estimators': 250, 'selector__k': 20}"
-roc_auc_score_train_test,"(0.8517073306857723, 0.8174087664125648)"
+best_params,"{'classifier__criterion': 'gini', 'classifier__max_depth': 20, 'classifier__max_features': 0.1, 'classifier__max_leaf_nodes': 30, 'classifier__n_estimators': 250}"
+roc_auc_score_train_test,"(0.8472082509895384, 0.8183249181851252)"
