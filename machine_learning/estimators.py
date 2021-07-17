@@ -33,14 +33,14 @@ classifiers = {
             'estimator': RandomForestClassifier(),
             'params':
                 {
-                    'classifier__n_estimators': [250, 300, 360, 500],
-                    'classifier__criterion': ['gini', 'entropy'],
-                    'classifier__max_features': [0.1],
-                    'classifier__max_depth': [5, 9, 12, 16, 20],
-                    'classifier__max_leaf_nodes': [30],
-                    'classifier__min_samples_split': [1, 2, 3, 4],
-                    'classifier__bootstrap': [True, False],
-                    # 'classifier__n_jobs': [None, -1],
+                    'classifier__n_estimators': [50, 100, 150, 250],  # sprobowac jeszcze jakies dodac
+                    'classifier__criterion': ['entropy'],
+                    'classifier__max_features': [0.3],  # dodac 3 opcje
+                    'classifier__max_depth': [5, 10, 16],  # dodac i odjac ok 2
+                    'classifier__max_leaf_nodes': [10, 30, 50, 100],
+                    'classifier__min_samples_split': [1, 2, 3],
+                    # 'classifier__bootstrap': [True, False],
+                    # 'classifier__max_samples': [1, 10, 100],
                     # 'selector__k': [20],
                 }},
     
@@ -123,7 +123,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
             ('classifier', value['estimator'])
         ])
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
-        grid = GridSearchCV(tmp_pipe, value['params'], cv=kfold)
+        grid = GridSearchCV(tmp_pipe, value['params'], cv=kfold, scoring='roc_auc')
         grid.fit(X_train, y_train)
 
         roc_auc_score_train = roc_auc_score(y_train, grid.predict_proba(X_train)[:, 1])
@@ -135,5 +135,5 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
         }
 
         models[value['name']] = [grid.best_estimator_]
-
+        print(f'{key} has been processed')
     return scores, models
