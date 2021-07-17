@@ -76,15 +76,20 @@ def show_data_profile():
         HtmlFile = open("downloads/pandas_report.html", 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, height=5000, scrolling=True)
-    
+
     scatter_matrix_exp = st.beta_expander(label='Show Plotly scatter matrix')
     with scatter_matrix_exp:
         HtmlFile = open("downloads/pxplot.html", 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         components.html(source_code, height=5000, scrolling=True)
-    
+
     pairplot_exp = st.beta_expander(label='Show pairplot')
     with pairplot_exp:
-        HtmlFile = open("downloads/snspairplot.html", 'r', encoding='utf-8')
-        source_code = HtmlFile.read()
-        components.html(source_code, height=5000, scrolling=True)
+        image = "downloads/snspairplot.png"
+        st.image(image, caption=None, width=None, use_column_width='always', output_format='auto')
+    #
+    # pairplot_exp = st.beta_expander(label='Show pairplot')
+    # with pairplot_exp:
+    #     HtmlFile = open("downloads/snspairplot.html", 'r', encoding='utf-8')
+    #     source_code = HtmlFile.read()
+    #     components.html(source_code, height=5000, scrolling=True)
