@@ -8,47 +8,33 @@ from streamlit_app import descriptions, sidebar, utils
 def main():
     """
     Streamlit app solving the problem of categorization from Hackathon.
-    :return:
     """
     
-    # # # #
-    # # # Streamlit settings and styling
-    # #
+    # # #
+    # # Streamlit settings and styling
     #
-    st.set_page_config(
-        layout="wide",  # Can be "centered" or "wide". In the future also "dashboard", etc.
-        initial_sidebar_state="auto",  # Can be "auto", "expanded", "collapsed"
-        page_title='MachineLearning project kodolamacz bootcamp',  # String or None.
-        page_icon="streamlit_app/media/icon.png",  # String, anything supported by st.image, or None.
-    )
+    utils.set_app_config()
     
-    st.markdown("""
-                <style>
-                .font {
-                    font-size:13px !important;
-                    line-height:8px !important;
-                }
-                .descr {
-                    font-size:13px !important;
-                    line-height:20px !important;
-                }
-                </style>
-                """, unsafe_allow_html=True)
-    
+    # # #
+    # # Get data
     #
+    df = utils.get_data()
+    
+    # # #
     # # Show sidebar
     #
     sidebar.sidebar()
     
-    tabs = st.sidebar.radio("", ('Main', 'Data Report', 'Predictions'))
+    tabs = st.sidebar.radio("", ('Main', 'Data Profiling', 'Predictions'))
     
     if tabs == 'Main':
-        # # # #
         # # # Main Page
         # #
         #
         
-        # Project logo
+        #
+        # # Project logo
+        #
         html_code = utils.show_logo()
         st.markdown(html_code, unsafe_allow_html=True)
         
@@ -71,16 +57,23 @@ def main():
                 st.markdown(f'<p class="font">{el}</p>', unsafe_allow_html=True)
     
     
-    elif tabs == "Data Report":
+    elif tabs == "Data Profiling":
+        # # # Profiling page
+        # #
+        #
         utils.show_data_profile()
-        df = pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
-        st.write(df)
-        pr = df.profile_report()
-        return st_profile_report(pr)
     
     elif tabs == "Predictions":
+        # # # Machine Learning part
+        # #
+        #
         st.write("You didn't select comedy.")
+    
+    
     else:
+        # # # If needed in the future
+        # #
+        #
         st.write('Something went wrong')
 
 

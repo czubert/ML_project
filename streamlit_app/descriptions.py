@@ -55,12 +55,11 @@ Need to predict probability of disbursal for test data set.
 """
 
 preprocessing_descr = """<h4>Dropped:</h4>
-<u>EmployerName</u> dropped because of too many categories
 <u>ID</u> dropped - not relevant
-<u>Salary_Account</u> dropped - not relevant
-<u>Lead_Creation_Date</u> dropped because made little intuitive impact on outcome
+<u>Lead_Creation_Date</u> dropped - makes little intuitive impact on outcome
 <u>LoggedIn</u> dropped
 <u>Salary_Account</u> dropped
+<u>Loan_Amount_Submitted</u> dropped - highly correlated with EMI_Loan_Submitted (>91%)
 <br><h4>Preprocessed:</h4>
 <u>City</u> values changed to "S", "M", "B", "L" depending on the occurrence
 <u>DOB</u> converted to Age | DOB dropped

@@ -28,6 +28,7 @@ Dropped:
 ID dropped - not relevant
 Lead_Creation_Date dropped because made little intuitive impact on outcome
 LoggedIn, Salary_Account dropped
+Loan_Amount_Submitted dropped - highly correlated with EMI_Loan_Submitted (>91%)
 
 Existing_EMI imputed with 0 (median) since only 111 values were missing
 Interest_Rate_Missing created which is 1 if Interest_Rate was missing else 0 |
@@ -35,8 +36,6 @@ Original variable Interest_Rate dropped
 Loan_Amount_Applied, Loan_Tenure_Applied imputed with median values
 EMI_Loan_Submitted_Missing created which is 1 if EMI_Loan_Submitted was missing else 0 |
 Original variable EMI_Loan_Submitted dropped
-Loan_Amount_Submitted_Missing created which is 1 if Loan_Amount_Submitted was missing else 0 |
-Original variable Loan_Amount_Submitted dropped
 Loan_Tenure_Submitted_Missing created which is 1 if Loan_Tenure_Submitted was missing else 0 |
 Original variable Loan_Tenure_Submitted dropped
 Processing_Fee_Missing created which is 1 if Processing_Fee was missing else 0 |
