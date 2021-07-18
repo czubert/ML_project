@@ -9,6 +9,7 @@ from sklearn.decomposition import PCA
 # classifiers
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 from xgboost.sklearn import XGBClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
@@ -27,22 +28,22 @@ from sklearn.metrics import roc_auc_score
 # # CV
 seed = 123
 classifiers = {
-    'RF':
-        {
-            'name': 'Random Forest Classifier',
-            'estimator': RandomForestClassifier(),
-            'params':
-                {
-                    'classifier__n_estimators': [50, 100, 150, 250],  # sprobowac jeszcze jakies dodac
-                    'classifier__criterion': ['entropy'],
-                    'classifier__max_features': [0.3],  # dodac 3 opcje
-                    'classifier__max_depth': [5, 10, 16],  # dodac i odjac ok 2
-                    'classifier__max_leaf_nodes': [10, 30, 50, 100],
-                    'classifier__min_samples_split': [1, 2, 3],
-                    # 'classifier__bootstrap': [True, False],
-                    # 'classifier__max_samples': [1, 10, 100],
-                    # 'selector__k': [20],
-                }},
+    # 'RF':
+    #     {
+    #         'name': 'Random Forest Classifier',
+    #         'estimator': RandomForestClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [50, 100, 150, 250, 500],  # sprobowac jeszcze jakies dodac
+    #                 'classifier__criterion': ['gini','entropy'],
+    #                 'classifier__max_features': [0.3,0.4,0.5],
+    #                 'classifier__max_depth': [5, 10, 16],
+    #                 'classifier__max_leaf_nodes': [10, 30, 50, 100],
+    #                 'classifier__min_samples_split': [1, 2, 3],
+    #                 'classifier__bootstrap': [True, False],
+    #                 'classifier__max_samples': [1, 10, 100],
+    #                 'selector__k': [None,100,150,200],
+    #             }},
     
     # 'tree':
     #     {
@@ -60,18 +61,22 @@ classifiers = {
     #                 'selector__k': [40],
     #             }},
     
-    # 'Logistiic':
-    #     {
-    #         'name': 'Logistic regression',
-    #         'estimator': LogisticRegression(),
-    #         'params':
-    #             {
-    #                 "classifier__class_weight": [None, 'balanced',{1:[1,10,100], 0:[1,10,100]}],
-    #                 "classifier__C": [0.1,1,10,100],
-    #                 "classifier__penalty": ['l1', 'l2', 'elasticnet', 'none'],
-    #                 'selector__k': [40,50,60],
-    #             }},
-    #
+    'Logistiic':
+        {
+            'name': 'Logistic regression',
+            'estimator': LogisticRegression(),
+            'params':
+                {
+                    # "classifier__class_weight": [None, 'balanced'],
+                    # "classifier__C": [0.1,1,10],
+                    # "classifier__max_iter": [100],
+                    # "classifier__penalty": ['l1', 'l2', 'elasticnet', 'none'], #potem sprawdzić z tym, ale bez solvera
+                    # "classifier__solver": ['saga'],
+                    "classifier__solver": ['lbfgs'],
+                    # "classifier__tol": [0.000001,0.00001],
+                    'selector__k': [100],
+                }},
+    
     #     'XGB':
     #         {
     #             'name': 'XGBoost Classifier',
@@ -118,7 +123,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
             ('preprocessing', preprocess_pipeline),
             # ('sampling', ADASYN(random_state=k_best)),
             ('sampling', RandomUnderSampler(random_state=40)),
-            # ('selector', SelectKBest()),
+            ('selector', SelectKBest()),
             # ('decomposition', PCA(20)),
             ('classifier', value['estimator'])
         ])
@@ -134,6 +139,6 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
             'roc_auc_score_train_test': (roc_auc_score_train, roc_auc_score_test)
         }
 
-        models[value['name']] = [grid.best_estimator_]
+        models[value['name']] = grid.best_estimator_
         print(f'{key} has been processed')
     return scores, models

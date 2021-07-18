@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from machine_learning import pipelines, estimators, utils, transformers
-
+from joblib import dump, load
 #
 # # warnings
 #
@@ -91,4 +91,18 @@ ml_variables = {
 
 scores, models = estimators.get_best_classsifier(**ml_variables)
 
-pd.DataFrame(scores).to_csv('downloads/scores.csv')
+#
+# # Saving scores to file
+#
+try:
+    saved_scores = pd.read_csv('downloads/scores.csv')
+    new_scores = pd.DataFrame(scores)
+    scores = pd.concat([saved_scores, new_scores], axis=1)
+    pd.DataFrame(scores).to_csv('downloads/scores.csv')
+except FileNotFoundError:
+    pd.DataFrame(scores).to_csv('downloads/scores.csv')
+#
+# # Saving models to files
+#
+for model, values in models.items():
+    dump(values, f'{model}_model.joblib')

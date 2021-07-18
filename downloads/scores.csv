@@ -1,3 +1,5 @@
-,Random Forest Classifier
-best_params,"{'classifier__criterion': 'entropy', 'classifier__max_depth': 10, 'classifier__max_features': 0.3, 'classifier__max_leaf_nodes': 50, 'classifier__min_samples_split': 2, 'classifier__n_estimators': 50}"
-roc_auc_score_train_test,"(0.8673157284811879, 0.819195346419679)"
+,Unnamed: 0,Logistic regression,Logistic regression
+0,best_params,"{'classifier__solver': 'lbfgs', 'selector__k': 50}",
+1,roc_auc_score_train_test,"(0.8210160066446497, 0.8125496318918988)",
+best_params,,,"{'classifier__solver': 'lbfgs', 'selector__k': 100}"
+roc_auc_score_train_test,,,"(0.8262293520383268, 0.8152042867161691)"
