@@ -2,9 +2,13 @@
 # # # # Machine Learning Part
 # # #
 
+import pandas as pd
 # imblearn
 from imblearn.pipeline import Pipeline
 from imblearn.under_sampling import RandomUnderSampler
+# saving models
+from joblib import dump
+# feature selection
 from sklearn.feature_selection import SelectKBest
 # metrics
 from sklearn.metrics import roc_auc_score
@@ -31,7 +35,7 @@ classifiers = {
     #                 # 'classifier__max_samples': [1, 10, 100],
     #                 # 'selector__k': [None,100,150,200],
     #             }},
-    
+
     # 'DecisionTreeClassifier':
     #     {
     #         'name': 'DecisionTreeClassifier',
@@ -111,7 +115,7 @@ classifiers = {
                     "classifier__kernel": ["poly"],
                     "classifier__probability": [True],
                     # "classifier__degree": [1, 2, 3],
-                    "classifier__C": [0.1, 1, 10],
+                    # "classifier__C": [0.1, 1, 10],
                     # 'selector__k': [40, 50, 60],
                 }},
 }
@@ -126,8 +130,8 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
     #     ('selector', SelectKBest(k=k_best)),
     #     ('decomposition', PCA()),
     # ])
-    
-    scores = {}  # dataframe
+
+    scores = pd.DataFrame(index=['best_params', 'roc_auc_score_train', 'roc_auc_score_val', 'roc_auc_score_test'])
     models = {}
     
     for key, value in classifiers.items():
@@ -147,22 +151,20 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
         roc_auc_score_val = roc_auc_score(y_val, grid.predict_proba(X_val)[:, 1])
         roc_auc_score_test = roc_auc_score(y_test, grid.predict_proba(X_test)[:, 1])
 
-        scores[value['name']] = {
-            'best_params': grid.best_params_,
-            'roc_auc_score_train': roc_auc_score_train,
-            'roc_auc_score_val': roc_auc_score_val,
-            'roc_auc_score_test': roc_auc_score_test,
-        }
+        # Adding params and scores of a model to DataFrame
+        scores[key] = (grid.best_params_, roc_auc_score_train, roc_auc_score_val, roc_auc_score_test)
 
         models[key] = grid.best_estimator_
 
         #
         # # Saving models to files
         #
-        from joblib import dump
-
         dump(grid.best_estimator_, f'models/{key}_model.joblib')
 
         print(f'{key} has been processed')
+    #
+    # # Saving scores to file
+    #
+    scores.to_csv('scores.csv')
 
     return scores, models

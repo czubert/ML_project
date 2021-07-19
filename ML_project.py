@@ -4,15 +4,14 @@ import pandas as pd
 #
 # # warnings
 #
-import shutup
-from joblib import dump
+# import shutup
 from sklearn.model_selection import train_test_split
 
 from machine_learning import pipelines, estimators
 
 SCORES = 'downloads/scores.csv'
 
-shutup.please()
+# shutup.please()
 warnings.filterwarnings("ignore")
 
 #
@@ -60,20 +59,16 @@ ml_variables = {
     'y_test': y_test,
 }
 
-scores, models = estimators.get_best_classsifier(**ml_variables)
+#
+estimators.get_best_classsifier(**ml_variables)
 
-#
-# # Saving scores to file
-#
-try:
-    saved_scores = pd.read_csv(SCORES)
-    new_scores = pd.DataFrame(scores)
-    scores = pd.concat([saved_scores, new_scores], axis=1)
-    pd.DataFrame(scores).to_csv(SCORES)
-except FileNotFoundError:
-    pd.DataFrame(scores).to_csv(SCORES)
-#
-# # Saving models to files
-#
-for model, values in models.items():
-    dump(values, f'models/{"_".join(model.split())}_model.joblib')
+# #
+# # # Saving scores to file
+# #
+# try:
+#     saved_scores = pd.read_csv(SCORES)
+#     new_scores = pd.DataFrame(scores)
+#     scores = pd.concat([saved_scores, new_scores], axis=1)
+#     pd.DataFrame(scores).to_csv(SCORES)
+# except FileNotFoundError:
+#     pd.DataFrame(scores).to_csv(SCORES)

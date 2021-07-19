@@ -1,0 +1,5 @@
+,SVC
+best_params,"{'classifier__kernel': 'poly', 'classifier__probability': True}"
+roc_auc_score_train,0.8097711220438082
+roc_auc_score_val,0.8182485821397674
+roc_auc_score_test,0.803195332555426

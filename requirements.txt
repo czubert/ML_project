@@ -1,4 +1,8 @@
 numpy==1.19
-pandas==1.2.4
+pandas~=1.0.5
 plotly==4.14.3
 pandas_profiling
+
+streamlit~=0.84.1
+joblib~=1.0.0
+scikit-learn~=0.23.1
