@@ -1,6 +1,6 @@
+import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
-import pandas as pd
 from joblib import load
 
 from streamlit_app import utils, descriptions, fake_data_preparation
@@ -81,23 +81,27 @@ def run_predictions_page(df):
     # # Data
     #
     possible_data = {'Created data': fake_df, 'Example data': fake_df, 'Uploaded data': fake_df}
-    st.subheader('Choose what data would you like to use for predictions')
+    st.markdown('#### Choose what data would you like to use for predictions')
     # chosen_data = st.radio('', ['Created data', 'Example data', 'Uploaded data'])
     chosen_data = st.radio('', possible_data)
-    
+
     #
     # # Models
     #
-    
+
     # All available models
     estimators = ['RandomForestClassifier', 'DecisionTreeClassifier', 'LogisticRegression',
                   'XGBoostClassifier', 'SVC']
-    
+    st.markdown("---")
+
     # Choosing one or more models for predictions
-    st.subheader('Select trained models to use for predictions')
+    st.markdown('#### Select trained models to use for predictions')
     chosen_estimators = st.multiselect('', estimators)
-    
+
     # Estimating the "Disbursed"
-    for chosen_estimator in chosen_estimators:
-        model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
-        st.write(f'{chosen_estimator} prediction: {model.predict(possible_data[chosen_data])[0]}')
+    if chosen_estimators is not None:
+        st.markdown("##### Predictions for you: ")
+        st.markdown('')
+        for chosen_estimator in chosen_estimators:
+            model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
+            st.write(f'{chosen_estimator} prediction: {model.predict(possible_data[chosen_data])[0]}')

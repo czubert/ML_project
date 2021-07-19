@@ -1,12 +1,14 @@
+import warnings
+
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from machine_learning import pipelines, estimators, utils, transformers
-from joblib import dump, load
 #
 # # warnings
 #
 import shutup
-import warnings
+from joblib import dump
+from sklearn.model_selection import train_test_split
+
+from machine_learning import pipelines, estimators
 
 SCORES = 'downloads/scores.csv'
 

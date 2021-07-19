@@ -1,10 +1,14 @@
-,Unnamed: 0,Unnamed: 0.1,LogisticRegression,RandomForestClassifier,DecisionTreeClassifier,RandomForestClassifier,DecisionTreeClassifier
-0,0,Unnamed: 0,,,,,
-1,best_params,,,{'classifier__n_estimators': 250},"{'classifier__max_depth': 5, 'classifier__max_features': 0.3, 'selector__k': 40}",,
-2,roc_auc_score_test,,,0.7710343057176196,0.7304046674445741,,
-3,roc_auc_score_train,,,0.9229530529761057,0.7842757560885085,,
-4,roc_auc_score_val,,,0.7594475952449613,0.7873331410810985,,
-best_params,,,,,,{'classifier__n_estimators': 250},"{'classifier__max_depth': 5, 'classifier__max_features': 0.3, 'selector__k': 40}"
-roc_auc_score_test,,,,,,0.7700527421236872,0.7185414235705951
-roc_auc_score_train,,,,,,0.9232942835093216,0.7933255509067725
-roc_auc_score_val,,,,,,0.7630510429683744,0.7773462783171521
+,Unnamed: 0,Unnamed: 0.1,Unnamed: 0.1.1,LogisticRegression,RandomForestClassifier,DecisionTreeClassifier,RandomForestClassifier.1,DecisionTreeClassifier.1,SVC
+0,0,0,Unnamed: 0,,,,,,
+1,1,best_params,,,{'classifier__n_estimators': 250},"{'classifier__max_depth': 5, 'classifier__max_features': 0.3, 'selector__k': 40}",,,
+2,2,roc_auc_score_test,,,0.7710343057176196,0.7304046674445741,,,
+3,3,roc_auc_score_train,,,0.9229530529761057,0.7842757560885085,,,
+4,4,roc_auc_score_val,,,0.7594475952449613,0.7873331410810985,,,
+5,best_params,,,,,,{'classifier__n_estimators': 250},"{'classifier__max_depth': 5, 'classifier__max_features': 0.3, 'selector__k': 40}",
+6,roc_auc_score_test,,,,,,0.7700527421236872,0.7185414235705951,
+7,roc_auc_score_train,,,,,,0.9232942835093216,0.7933255509067725,
+8,roc_auc_score_val,,,,,,0.7630510429683744,0.7773462783171521,
+best_params,,,,,,,,,"{'classifier__C': 10, 'classifier__kernel': 'poly', 'classifier__probability': True}"
+roc_auc_score_test,,,,,,,,,0.8006459743290548
+roc_auc_score_train,,,,,,,,,0.8130740352748321
+roc_auc_score_val,,,,,,,,,0.813289756160082
