@@ -82,8 +82,7 @@ def run_predictions_page(df):
     #
     possible_data = {'Created data': fake_df, 'Example data': fake_df, 'Uploaded data': fake_df}
     st.markdown('#### Choose what data would you like to use for predictions')
-    # chosen_data = st.radio('', ['Created data', 'Example data', 'Uploaded data'])
-    chosen_data = st.radio('', possible_data)
+    chosen_data = st.radio('Choose what data would you like to use for predictions', possible_data)
 
     #
     # # Models
