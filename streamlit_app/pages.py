@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 import pandas as pd
 from joblib import load
 
-from streamlit_app import utils, descriptions, fake_data
+from streamlit_app import utils, descriptions, fake_data_preparation
 
 
 def show_main_content(df):
@@ -70,23 +70,34 @@ def show_data_profile():
 
 
 def run_predictions_page(df):
-    # containter to prepare fake data
-    fake_data_exp = st.beta_expander('Create your own data for predictions')
-    with fake_data_exp:
-        fake_df = pd.DataFrame(fake_data.create_fake_data(df), index=['Fake data'])
-        st.write(fake_df)
-        
-        model = load('models/LogisticRegression_model.joblib')
-        st.write(model.predict(fake_df))
+    # Expander to prepare fake data
+    fake_data_exp = st.beta_expander('Create your own data and predict if "Disbursed"')
     
+    with fake_data_exp:
+        fake_df = pd.DataFrame(fake_data_preparation.create_fake_data(df), index=['Fake data'])  # creating fake data
+        st.write(fake_df)  # showing fake data
+    
+    #
+    # # Data
+    #
+    possible_data = {'Created data': fake_df, 'Example data': fake_df, 'Uploaded data': fake_df}
+    st.subheader('Choose what data would you like to use')
+    # chosen_data = st.radio('', ['Created data', 'Example data', 'Uploaded data'])
+    chosen_data = st.radio('', possible_data)
+    
+    #
+    # # Models
+    #
+    
+    # All available models
     estimators = ['RandomForestClassifier', 'DecisionTreeClassifier', 'LogisticRegression',
                   'XGBoostClassifier', 'SVC']
     
-    options = st.multiselect(
-        'What are your favorite colors',
-        estimators)
-    st.write('You selected:', options)
-
-# from joblib import load
-# model = load('models/LogisticRegression_model.joblib')
-# model.predict(X_test)
+    # Choosing one or more models for predictions
+    st.subheader('Select trained models for your data')
+    chosen_estimators = st.multiselect('', estimators)
+    
+    # Estimating the "Disbursed"
+    for chosen_estimator in chosen_estimators:
+        model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
+        st.write(f'{chosen_estimator} prediction: {model.predict(possible_data[chosen_data])[0]}')
