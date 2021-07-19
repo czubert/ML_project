@@ -2,28 +2,15 @@
 # # # # Machine Learning Part
 # # #
 
-from sklearn.model_selection import StratifiedKFold, GridSearchCV
-from sklearn.feature_selection import SelectKBest
-from sklearn.decomposition import PCA
-
-# classifiers
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import ExtraTreesClassifier
-from xgboost.sklearn import XGBClassifier
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import AdaBoostClassifier
-
 # imblearn
-from imblearn.metrics import classification_report_imbalanced
 from imblearn.pipeline import Pipeline
-from imblearn.over_sampling import SMOTE, ADASYN
 from imblearn.under_sampling import RandomUnderSampler
-
+from sklearn.feature_selection import SelectKBest
 # metrics
-from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
+# classifiers
+from sklearn.svm import SVC
 
 # # CV
 seed = 123
@@ -76,19 +63,19 @@ classifiers = {
     #                 'decomposition__n_components': [110, 120, 130, 140, 150],
     #             }},
     
-    'XGBoostClassifier':
-        {
-            'name': 'XGBoostClassifier',
-            'estimator': XGBClassifier(),
-            'params':
-                {
-                    'classifier__n_estimators': [100, 200],
-                    'classifier__max_depth': [10, 50, 100],
-                    'classifier__gamma': [1],
-                    'classifier__reg_alpha': [0],
-                    'classifier__reg_lambda': [0.2],
-                }},
-    
+    # 'XGBoostClassifier':
+    #     {
+    #         'name': 'XGBoostClassifier',
+    #         'estimator': XGBClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [100, 200],
+    #                 'classifier__max_depth': [10, 50, 100],
+    #                 'classifier__gamma': [1],
+    #                 'classifier__reg_alpha': [0],
+    #                 'classifier__reg_lambda': [0.2],
+    #             }},
+    #
     #     'ExtraTreesClassifier':
     #         {
     #             'name': 'ExtraTreesClassifier',
@@ -121,10 +108,11 @@ classifiers = {
             'estimator': SVC(),
             'params':
                 {
-                    # "classifier__kernel": ["poly"],
-                    "classifier__degree": [1, 2, 3],
+                    "classifier__kernel": ["poly"],
+                    "classifier__probability": [True],
+                    # "classifier__degree": [1, 2, 3],
                     "classifier__C": [0.1, 1, 10],
-                    'selector__k': [40, 50, 60],
+                    # 'selector__k': [40, 50, 60],
                 }},
 }
 kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
