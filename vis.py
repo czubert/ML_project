@@ -31,25 +31,19 @@ def main():
         #
         pages.show_main_content(df)
 
-    elif tabs == "Data Profiling":
+    if tabs == "Data Profiling":
         # # #
         # # Profiling page
         #
         pages.show_data_profile()
 
-    elif tabs == "Predictions":
+    if tabs == "Predictions":
         # # #
         # # Machine Learning part
         #
         st.sidebar.file_uploader('Upload data for tests')
         pages.run_predictions_page(df)
     
-    
-    else:
-        # # # If needed in the future
-        # #
-        #
-        st.write('Something went wrong')
 
 
 if __name__ == '__main__':

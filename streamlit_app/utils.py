@@ -1,6 +1,7 @@
 import base64
-import streamlit as st
+
 import pandas as pd
+import streamlit as st
 
 
 def set_app_config():
@@ -66,9 +67,3 @@ def show_icon():
 @st.cache
 def get_data():
     return pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
-
-    # pairplot_exp = st.beta_expander(label='Show pairplot')
-    # with pairplot_exp:
-    #     HtmlFile = open("downloads/snspairplot.html", 'r', encoding='utf-8')
-    #     source_code = HtmlFile.read()
-    #     components.html(source_code, height=5000, scrolling=True)
