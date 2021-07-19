@@ -28,9 +28,9 @@ from sklearn.metrics import roc_auc_score
 # # CV
 seed = 123
 classifiers = {
-    # 'RF':
+    # 'RandomForestClassifier':
     #     {
-    #         'name': 'Random Forest Classifier',
+    #         'name': 'RandomForestClassifier',
     #         'estimator': RandomForestClassifier(),
     #         'params':
     #             {
@@ -45,9 +45,9 @@ classifiers = {
     #                 'selector__k': [None,100,150,200],
     #             }},
     
-    # 'tree':
+    # 'DecisionTreeClassifier':
     #     {
-    #         'name': 'Decision Tree Classifier',
+    #         'name': 'DecisionTreeClassifier',
     #         'estimator': DecisionTreeClassifier(),
     #         'params':
     #             {
@@ -61,26 +61,51 @@ classifiers = {
     #                 'selector__k': [40],
     #             }},
     
-    'Logistiic':
+    'LogisticRegression':
         {
-            'name': 'Logistic regression',
+            'name': 'LogisticRegression',
             'estimator': LogisticRegression(),
             'params':
                 {
-                    # "classifier__class_weight": [None, 'balanced'],
-                    # "classifier__C": [0.1,1,10],
-                    # "classifier__max_iter": [100],
-                    # "classifier__penalty": ['l1', 'l2', 'elasticnet', 'none'], #potem sprawdzić z tym, ale bez solvera
-                    # "classifier__solver": ['saga'],
+                    "classifier__class_weight": [None],
+                    "classifier__C": [1],
+                    "classifier__max_iter": [200],
                     "classifier__solver": ['lbfgs'],
-                    # "classifier__tol": [0.000001,0.00001],
-                    'selector__k': [100],
+                    "classifier__tol": [0.00001],
+                    'selector__k': [150],
+                    'decomposition__n_components': [110, 120, 130, 140, 150],
                 }},
     
-    #     'XGB':
+    #     'XGBoostClassifier':
     #         {
-    #             'name': 'XGBoost Classifier',
+    #             'name': 'XGBoostClassifier',
     #             'estimator': XGBClassifier(),
+    #             'params':
+    #                 {
+    #                     'classifier__n_estimators': [100,200],
+    #                     'classifier__max_depth': [10,50,100],
+    #                     'classifier__gamma':[1],
+    #                     'classifier__reg_alpha': [0],
+    #                     'classifier__reg_lambda': [0.2],
+    #                 }},
+    #
+    #     'ExtraTreesClassifier':
+    #         {
+    #             'name': 'ExtraTreesClassifier',
+    #             'estimator': ExtraTreesClassifier(),
+    #             'params':
+    #                 {
+    #                     'classifier__n_estimators': [100,200],
+    #                     'classifier__max_depth': [10,50,100],
+    #                     'classifier__gamma':[1],
+    #                     'classifier__reg_alpha': [0],
+    #                     'classifier__reg_lambda': [0.2],
+    #                 }},
+    #
+    #     'AdaBoostClassifier':
+    #         {
+    #             'name': 'AdaBoostClassifier',
+    #             'estimator': AdaBoostClassifier(),
     #             'params':
     #                 {
     #                     'classifier__n_estimators': [100,200],
@@ -92,7 +117,7 @@ classifiers = {
     #
     # 'SVC':
     #     {
-    #         'name': 'SVC classifier',
+    #         'name': 'SVC',
     #         'estimator': SVC(),
     #         'params':
     #             {
@@ -105,7 +130,7 @@ classifiers = {
 kfold = StratifiedKFold(n_splits=5, random_state=seed, shuffle=True)
 
 
-def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
+def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y_test, y_val):
     # TODO make preprocessing adasyn etc before the loop, not to repeat this fo each estimators
     # final_processing_pipe = Pipeline([
     #     ('preprocessing', preprocess_pipeline),
@@ -114,17 +139,16 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
     #     ('decomposition', PCA()),
     # ])
     
-    scores = {}
+    scores = {}  # dataframe
     models = {}
     
     for key, value in classifiers.items():
         tmp_pipe = Pipeline([
             # ('final_processing', final_processing_pipe),
             ('preprocessing', preprocess_pipeline),
-            # ('sampling', ADASYN(random_state=k_best)),
             ('sampling', RandomUnderSampler(random_state=40)),
             ('selector', SelectKBest()),
-            # ('decomposition', PCA(20)),
+            ('decomposition', PCA()),
             ('classifier', value['estimator'])
         ])
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
@@ -132,13 +156,17 @@ def get_best_classsifier(preprocess_pipeline, X_train, y_train, X_test, y_test):
         grid.fit(X_train, y_train)
 
         roc_auc_score_train = roc_auc_score(y_train, grid.predict_proba(X_train)[:, 1])
+        roc_auc_score_val = roc_auc_score(y_val, grid.predict_proba(X_val)[:, 1])
         roc_auc_score_test = roc_auc_score(y_test, grid.predict_proba(X_test)[:, 1])
 
         scores[value['name']] = {
             'best_params': grid.best_params_,
-            'roc_auc_score_train_test': (roc_auc_score_train, roc_auc_score_test)
+            'roc_auc_score_train': roc_auc_score_train,
+            'roc_auc_score_val': roc_auc_score_val,
+            'roc_auc_score_test': roc_auc_score_test,
         }
 
         models[value['name']] = grid.best_estimator_
+
         print(f'{key} has been processed')
     return scores, models

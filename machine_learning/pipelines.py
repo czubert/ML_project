@@ -27,7 +27,7 @@ binary_pipeline = Pipeline([
 # WHAT a lot of values to normalize is set to '-1' which gives negative results after normalization
 # TODO probably should be changed to mean or mode
 # TODO check if standard scaler or normalization is better for the data
-
+# TODO important - check if Interest_Rate is for sure numerical not categorical
 numerical_features = ['Loan_Amount_Applied', 'Loan_Tenure_Applied', 'Var5',
                       'Processing_Fee', 'Interest_Rate', 'Monthly_Income']
 num_pipeline = Pipeline([

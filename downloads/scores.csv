@@ -1,5 +1,2 @@
-,Unnamed: 0,Logistic regression,Logistic regression
-0,best_params,"{'classifier__solver': 'lbfgs', 'selector__k': 50}",
-1,roc_auc_score_train_test,"(0.8210160066446497, 0.8125496318918988)",
-best_params,,,"{'classifier__solver': 'lbfgs', 'selector__k': 100}"
-roc_auc_score_train_test,,,"(0.8262293520383268, 0.8152042867161691)"
+,LogisticRegression
+Unnamed: 0,
