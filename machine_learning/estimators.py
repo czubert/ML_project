@@ -28,53 +28,53 @@ from sklearn.metrics import roc_auc_score
 # # CV
 seed = 123
 classifiers = {
-    # 'RandomForestClassifier':
-    #     {
-    #         'name': 'RandomForestClassifier',
-    #         'estimator': RandomForestClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [50, 100, 150, 250, 500],  # sprobowac jeszcze jakies dodac
-    #                 'classifier__criterion': ['gini','entropy'],
-    #                 'classifier__max_features': [0.3,0.4,0.5],
-    #                 'classifier__max_depth': [5, 10, 16],
-    #                 'classifier__max_leaf_nodes': [10, 30, 50, 100],
-    #                 'classifier__min_samples_split': [1, 2, 3],
-    #                 'classifier__bootstrap': [True, False],
-    #                 'classifier__max_samples': [1, 10, 100],
-    #                 'selector__k': [None,100,150,200],
-    #             }},
-    
-    # 'DecisionTreeClassifier':
-    #     {
-    #         'name': 'DecisionTreeClassifier',
-    #         'estimator': DecisionTreeClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__max_features': [0.1,0.3,0.5],
-    #                 'classifier__max_depth': [5,6,7,10,15],
-    #                 'classifier__criterion': ['gini'],
-    #                 'classifier__max_leaf_nodes': [50, 100],
-    #                 'classifier__min_weight_fraction_leaf': [0, 1,10,100],
-    #                 'classifier__min_samples_split': [0.1, 1,2,10,100],
-    #
-    #                 'selector__k': [40],
-    #             }},
-    
-    'LogisticRegression':
+    'RandomForestClassifier':
         {
-            'name': 'LogisticRegression',
-            'estimator': LogisticRegression(),
+            'name': 'RandomForestClassifier',
+            'estimator': RandomForestClassifier(),
             'params':
                 {
-                    "classifier__class_weight": [None],
-                    "classifier__C": [1],
-                    "classifier__max_iter": [200],
-                    "classifier__solver": ['lbfgs'],
-                    "classifier__tol": [0.00001],
-                    'selector__k': [150],
-                    'decomposition__n_components': [110, 120, 130, 140, 150],
+                    'classifier__n_estimators': [50, 100, 150, 250, 500],  # sprobowac jeszcze jakies dodac
+                    # 'classifier__criterion': ['gini','entropy'],
+                    # 'classifier__max_features': [0.3,0.4,0.5],
+                    # 'classifier__max_depth': [5, 10, 16],
+                    # 'classifier__max_leaf_nodes': [10, 30, 50, 100],
+                    # 'classifier__min_samples_split': [1, 2, 3],
+                    # 'classifier__bootstrap': [True, False],
+                    # 'classifier__max_samples': [1, 10, 100],
+                    # 'selector__k': [None,100,150,200],
                 }},
+    
+    'DecisionTreeClassifier':
+        {
+            'name': 'DecisionTreeClassifier',
+            'estimator': DecisionTreeClassifier(),
+            'params':
+                {
+                    'classifier__max_features': [0.1, 0.3, 0.5],
+                    'classifier__max_depth': [5, 6, 7, 10, 15],
+                    # 'classifier__criterion': ['gini'],
+                    # 'classifier__max_leaf_nodes': [50, 100],
+                    # 'classifier__min_weight_fraction_leaf': [0, 1,10,100],
+                    # 'classifier__min_samples_split': [0.1, 1,2,10,100],
+                    
+                    'selector__k': [40],
+                }},
+    
+    # 'LogisticRegression':
+    #     {
+    #         'name': 'LogisticRegression',
+    #         'estimator': LogisticRegression(),
+    #         'params':
+    #             {
+    #                 "classifier__class_weight": [None],
+    #                 "classifier__C": [1],
+    #                 "classifier__max_iter": [200],
+    #                 "classifier__solver": ['lbfgs'],
+    #                 "classifier__tol": [0.00001],
+    #                 'selector__k': [150],
+    #                 'decomposition__n_components': [110, 120, 130, 140, 150],
+    #             }},
     
     #     'XGBoostClassifier':
     #         {
@@ -166,7 +166,15 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
             'roc_auc_score_test': roc_auc_score_test,
         }
 
-        models[value['name']] = grid.best_estimator_
+        models[key] = grid.best_estimator_
+
+        #
+        # # Saving models to files
+        #
+        from joblib import dump
+
+        dump(grid.best_estimator_, f'models/{key}_model.joblib')
 
         print(f'{key} has been processed')
+
     return scores, models

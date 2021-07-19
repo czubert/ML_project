@@ -81,7 +81,7 @@ def run_predictions_page(df):
     # # Data
     #
     possible_data = {'Created data': fake_df, 'Example data': fake_df, 'Uploaded data': fake_df}
-    st.subheader('Choose what data would you like to use')
+    st.subheader('Choose what data would you like to use for predictions')
     # chosen_data = st.radio('', ['Created data', 'Example data', 'Uploaded data'])
     chosen_data = st.radio('', possible_data)
     
@@ -94,7 +94,7 @@ def run_predictions_page(df):
                   'XGBoostClassifier', 'SVC']
     
     # Choosing one or more models for predictions
-    st.subheader('Select trained models for your data')
+    st.subheader('Select trained models to use for predictions')
     chosen_estimators = st.multiselect('', estimators)
     
     # Estimating the "Disbursed"
