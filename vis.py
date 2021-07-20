@@ -23,7 +23,7 @@ def main():
     #
     sidebar.sidebar()
     
-    tabs = st.sidebar.radio("", ('Main', 'Data Preprocessing', 'Predictions'))
+    tabs = st.sidebar.radio("", ('Main', 'Data Profiling', 'Data Preprocessing', 'Predictions'))
 
     if tabs == 'Main':
         # # #
@@ -31,11 +31,17 @@ def main():
         #
         pages.show_main_content(df)
 
-    if tabs == "Data Preprocessing":
+    if tabs == "Data Profiling":
         # # #
         # # Profiling page
         #
         pages.show_data_profile()
+
+    if tabs == "Data Preprocessing":
+        # # #
+        # # Profiling page
+        #
+        pages.show_data_preprocessing()
 
     if tabs == "Predictions":
         # # #

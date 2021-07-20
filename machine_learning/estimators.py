@@ -9,6 +9,7 @@ from imblearn.under_sampling import RandomUnderSampler
 # # saving models
 from joblib import dump
 # # feature selection
+from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest
 # # metrics
 from sklearn.linear_model import LogisticRegression
@@ -69,7 +70,7 @@ classifiers = {
                     "classifier__tol": [0.1],
                     'selector__k': [100, 150],
                     # 'decomposition__n_components': [110, 120, 130, 140, 150],
-                    # 'decomposition__n_components': [50, 80, 110, 130,     150],
+                    'decomposition__n_components': [50, 80, 110, 130, 150],
                 }},
     
     # 'XGBoostClassifier':
@@ -146,7 +147,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
             ("scaler", StandardScaler(with_mean=False)),
             ('sampling', RandomUnderSampler(random_state=40)),
             ('selector', SelectKBest()),
-            # ('decomposition', PCA()),
+            ('decomposition', PCA()),
             ('classifier', value['estimator'])
         ])
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
