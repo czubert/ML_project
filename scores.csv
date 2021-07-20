@@ -1,5 +1,5 @@
-,SVC
-best_params,"{'classifier__kernel': 'poly', 'classifier__probability': True}"
-roc_auc_score_train,0.8097711220438082
-roc_auc_score_val,0.8182485821397674
-roc_auc_score_test,0.803195332555426
+AdaBoostClassifier,AdaBoostClassifier.1,AdaBoostClassifier.1.1,AdaBoostClassifier
+{'classifier__n_estimators': 50},{'classifier__n_estimators': 50},{'classifier__n_estimators': 50},"{'classifier__algorithm': 'SAMME', 'classifier__base_estimator': SVC(), 'classifier__learning_rate': 0.1, 'classifier__n_estimators': 50}"
+0.8214264597583885,0.8214264597583885,0.8214264597583885,0.7165226828104205
+0.8036047294049793,0.8036047294049793,0.8036047294049793,0.7306027107565126
+0.7955925320886814,0.7955925320886814,0.7955925320886814,0.7363803967327889

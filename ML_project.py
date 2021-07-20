@@ -59,9 +59,8 @@ ml_variables = {
     'y_test': y_test,
 }
 
+scores, models = estimators.get_best_classsifier(**ml_variables)
 #
-estimators.get_best_classsifier(**ml_variables)
-
 # #
 # # # Saving scores to file
 # #
