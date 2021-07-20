@@ -208,9 +208,10 @@ def get_employer_description():
     """
     numerical_data_exp = st.beta_expander(label='Show Employers Name feature preprocessing')
     with numerical_data_exp:
-        st.markdown("Data must be numeric not string, therefore one need to change two type values to binary ones")
+        st.markdown("Too many different values, one need to replace less common values with 'Other', and then "
+                    "OneHotEncode as values are strings")
         st.markdown("Below you can find the solution, and sample results in a DataFrame:")
-        
+    
         st.code(employer_feature, language='python')
 
 
@@ -221,7 +222,7 @@ employer_feature = """
 #
 emp_name = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Employer_Name'])),  # Selecting Emplyer Name feature to preprocess
-    ("salary_acc", transformers.EmpName()),
+    ("salary_acc", transformers.EmpName()),  # changes not common values to 'Other'
     ("impute", SimpleImputer(strategy="most_frequent")),  # Fill NaN values with most frequent value
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
@@ -234,7 +235,8 @@ def get_source_description():
     """
     numerical_data_exp = st.beta_expander(label='Show Source feature preprocessing')
     with numerical_data_exp:
-        st.markdown("Data must be numeric not string, therefore one need to change two type values to binary ones")
+        st.markdown(
+            "Two values are the most popular ones (S122 and S133) the rest are in minority and changed to 'other'")
         st.markdown("Below you can find the solution, and sample results in a DataFrame:")
         
         st.code(source_feature, language='python')
@@ -247,7 +249,7 @@ source_feature = """
 #
 source_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Source'])),  # Selecting Source feature to preprocess
-    ("source", transformers.Source()),  # replaces other then 2 most popular values with 'other'
+    ("source", transformers.Source()),  # replaces other then 2 most popular values (S122 and S133) with 'other'
     ("impute", SimpleImputer(strategy="most_frequent")),  # Fill NaN values with most frequent value
     ("to_df", utils.BackToDf(['Source'])),  # making DataFrame back from NumPy array
     ("cat_encoder", utils.MyOneHotEncoder()),  # takes df with categorical features and returns df with binary values
@@ -261,9 +263,10 @@ def get_income_description():
     """
     numerical_data_exp = st.beta_expander(label='Show Income Feature Preprocessing')
     with numerical_data_exp:
-        st.markdown("Data must be numeric not string, therefore one need to change two type values to binary ones")
+        st.markdown("Income is numeric, however there are some outliers, therefore one should change them to "
+                    "95th percentile (according to the plot)")
         st.markdown("Below you can find the solution, and sample results in a DataFrame:")
-        
+    
         st.code(income_feature, language='python')
 
 
@@ -274,7 +277,7 @@ income_feature = """
 #
 income_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Monthly_Income'])), # Selecting Monthly Income feature to preprocess
-    ("income", transformers.Income()),
+    ("income", transformers.Income()),  # changes outliers to the value of 95th percentile
     ("impute", SimpleImputer(strategy="median")),  # Fill NaN values with median
     ("to_df", utils.BackToDf(['Monthly_Income'])),  # making DataFrame back from NumPy array
 ])
