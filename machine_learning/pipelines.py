@@ -1,9 +1,7 @@
-import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline, FeatureUnion
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import PowerTransformer, RobustScaler
 
-# Importing inner modules
 from machine_learning import utils, transformers
 
 # # # #
@@ -12,7 +10,7 @@ from machine_learning import utils, transformers
 #
 # WHAT: should I prepare data in case of NaN?
 
-binary_features = ['Gender', 'Mobile_Verified', 'Filled_Form', 'Device_Type']
+binary_features = ['Gender', 'Mobile_Verified', 'Filled_Form', 'Device_Type', 'Var5']
 binary_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(binary_features)),
     ("impute", SimpleImputer(strategy="most_frequent")),
@@ -24,16 +22,14 @@ binary_pipeline = Pipeline([
 # # # Numerical features
 # #
 #
-# WHAT a lot of values to normalize is set to '-1' which gives negative results after normalization
-# TODO probably should be changed to mean or mode
-# TODO check if standard scaler or normalization is better for the data
-# TODO important - check if Interest_Rate is for sure numerical not categorical
 numerical_features = ['Loan_Amount_Applied', 'Loan_Tenure_Applied', 'Var5',
                       'Processing_Fee', 'Interest_Rate', 'Monthly_Income']
+
 num_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(numerical_features)),
-    ("impute", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler(with_mean=False)),
+    ("impute", SimpleImputer(strategy="median")),  # TODO compare to median
+    ("remove_outliers", RobustScaler(quantile_range=(5.0, 95.0))),
+    ("box_cox", PowerTransformer(standardize=True)),
     ("back_to_df", utils.BackToDf(numerical_features))
 ])
 
@@ -56,10 +52,8 @@ dob_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['DOB'])),
     ("dob_to_age", transformers.DobToAge()),
     ("impute", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler(with_mean=False)),
     ("back_to_df", utils.BackToDf('Age'))
 ])
-
 
 # # # #
 # # # Submitted feature
@@ -70,7 +64,6 @@ submitted_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(submitted_features)),
     ("submitted", transformers.Submitted()),
     ("impute", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler(with_mean=False)),
 ])
 
 # # # #
@@ -79,8 +72,8 @@ submitted_pipeline = Pipeline([
 #
 city_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['City'])),
-    ("city", transformers.City()),
     # maps cities names to labels based on the frequency and fill na with most frequent label
+    ("city", transformers.City()),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
 
@@ -126,7 +119,6 @@ income_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Monthly_Income'])),
     ("income", transformers.Income()),
     ("impute", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler()),
     ("to_df", utils.BackToDf(['Monthly_Income'])),
 ])
 

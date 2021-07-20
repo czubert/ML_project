@@ -46,6 +46,8 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 preprocess_pipeline = pipelines.get_preprocessed_data(X_train)
 # X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
 
+# num_yolo = pipelines.num_pipeline.fit_transform(X_train)
+
 #
 # # Machine Learning
 #
@@ -60,14 +62,3 @@ ml_variables = {
 }
 
 scores, models = estimators.get_best_classsifier(**ml_variables)
-#
-# #
-# # # Saving scores to file
-# #
-# try:
-#     saved_scores = pd.read_csv(SCORES)
-#     new_scores = pd.DataFrame(scores)
-#     scores = pd.concat([saved_scores, new_scores], axis=1)
-#     pd.DataFrame(scores).to_csv(SCORES)
-# except FileNotFoundError:
-#     pd.DataFrame(scores).to_csv(SCORES)

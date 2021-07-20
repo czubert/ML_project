@@ -9,16 +9,16 @@ from imblearn.under_sampling import RandomUnderSampler
 # # saving models
 from joblib import dump
 # # feature selection
-from sklearn.ensemble import AdaBoostClassifier
 from sklearn.feature_selection import SelectKBest
 # # metrics
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 
 # # classifiers
 
 # # CV
-from xgboost import XGBClassifier
+from sklearn.preprocessing import StandardScaler
 
 SCORE_PATH = 'scores.csv'
 seed = 123
@@ -56,33 +56,34 @@ classifiers = {
     #                 'selector__k': [40],
     #             }},
     #
-    # 'LogisticRegression':
-    #     {
-    #         'name': 'LogisticRegression',
-    #         'estimator': LogisticRegression(),
-    #         'params':
-    #             {
-    #                 "classifier__class_weight": [None],
-    #                 "classifier__C": [1],
-    #                 "classifier__max_iter": [200],
-    #                 "classifier__solver": ['lbfgs'],
-    #                 "classifier__tol": [0.00001],
-    #                 'selector__k': [150],
-    #                 # 'decomposition__n_components': [110, 120, 130, 140, 150],
-    #             }},
-    
-    'XGBoostClassifier':
+    'LogisticRegression':
         {
-            'name': 'XGBoostClassifier',
-            'estimator': XGBClassifier(),
+            'name': 'LogisticRegression',
+            'estimator': LogisticRegression(),
             'params':
                 {
-                    'classifier__n_estimators': [100, 200],
-                    'classifier__max_depth': [10, 50, 100],
-                    'classifier__gamma': [1],
-                    'classifier__reg_alpha': [0],
-                    'classifier__reg_lambda': [0.2],
+                    "classifier__class_weight": [None],
+                    "classifier__C": [0.1, 1, 10],
+                    "classifier__max_iter": [80, 90, 100, 110, 130],
+                    "classifier__solver": ['lbfgs'],
+                    "classifier__tol": [0.1],
+                    'selector__k': [100, 150],
+                    # 'decomposition__n_components': [110, 120, 130, 140, 150],
+                    # 'decomposition__n_components': [50, 80, 110, 130,     150],
                 }},
+    
+    # 'XGBoostClassifier':
+    #     {
+    #         'name': 'XGBoostClassifier',
+    #         'estimator': XGBClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [100, 200],
+    #                 'classifier__max_depth': [10, 50, 100],
+    #                 'classifier__gamma': [1],
+    #                 'classifier__reg_alpha': [0],
+    #                 'classifier__reg_lambda': [0.2],
+    #             }},
     
     # 'ExtraTreesClassifier':
     #     {
@@ -98,15 +99,15 @@ classifiers = {
     #                 'classifier__min_samples_leaf': [1,2,5],
     #             }},
     
-    'AdaBoostClassifier':
-        {
-            'name': 'AdaBoostClassifier',
-            'estimator': AdaBoostClassifier(),
-            'params':
-                {
-                    'classifier__n_estimators': [50, 100, 200, 500],
-                    'classifier__learning_rate': [0.01, 0.1, 1, 2],
-                }},
+    # 'AdaBoostClassifier':
+    #     {
+    #         'name': 'AdaBoostClassifier',
+    #         'estimator': AdaBoostClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [500],
+    #                 'classifier__learning_rate': [0.1],
+    #             }},
     
     # 'SVC':
     #     {
@@ -142,6 +143,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
         tmp_pipe = Pipeline([
             # ('final_processing', final_processing_pipe),
             ('preprocessing', preprocess_pipeline),
+            ("scaler", StandardScaler(with_mean=False)),
             ('sampling', RandomUnderSampler(random_state=40)),
             ('selector', SelectKBest()),
             # ('decomposition', PCA()),

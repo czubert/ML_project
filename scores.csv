@@ -1,5 +1,5 @@
-AdaBoostClassifier,AdaBoostClassifier.1,AdaBoostClassifier.1.1,AdaBoostClassifier
-{'classifier__n_estimators': 50},{'classifier__n_estimators': 50},{'classifier__n_estimators': 50},"{'classifier__algorithm': 'SAMME', 'classifier__base_estimator': SVC(), 'classifier__learning_rate': 0.1, 'classifier__n_estimators': 50}"
-0.8214264597583885,0.8214264597583885,0.8214264597583885,0.7165226828104205
-0.8036047294049793,0.8036047294049793,0.8036047294049793,0.7306027107565126
-0.7955925320886814,0.7955925320886814,0.7955925320886814,0.7363803967327889
+LogisticRegression,LogisticRegression.1,LogisticRegression.1.1,LogisticRegression.1.1.1,LogisticRegression
+"{'classifier__C': 1, 'classifier__class_weight': None, 'classifier__max_iter': 200, 'classifier__solver': 'lbfgs', 'classifier__tol': 1e-05, 'selector__k': 150}","{'classifier__C': 1, 'classifier__class_weight': None, 'classifier__max_iter': 200, 'classifier__solver': 'lbfgs', 'classifier__tol': 1e-05, 'selector__k': 150}","{'classifier__C': 1, 'classifier__class_weight': None, 'classifier__max_iter': 100, 'classifier__solver': 'lbfgs', 'classifier__tol': 0.1, 'selector__k': 150}","{'classifier__C': 1, 'classifier__class_weight': None, 'classifier__max_iter': 100, 'classifier__solver': 'lbfgs', 'classifier__tol': 0.1, 'selector__k': 150}","{'classifier__C': 1, 'classifier__class_weight': None, 'classifier__max_iter': 90, 'classifier__solver': 'lbfgs', 'classifier__tol': 0.1, 'selector__k': 100}"
+0.8360731263059833,0.8360731263059833,0.836083484178763,0.836083484178763,0.830014060364055
+0.816093434586177,0.816093434586177,0.8160972796308756,0.8160972796308756,0.8149924701207985
+0.8090478413068845,0.8090478413068845,0.8092830805134189,0.8092830805134189,0.8072466744457409

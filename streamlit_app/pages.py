@@ -50,6 +50,31 @@ def show_main_content(df):
 
 
 def show_data_profile():
+    st.header('Data profiling and preprocessing description ')
+    numerical_data_exp = st.beta_expander(label='Show numerical data')
+    with numerical_data_exp:
+        st.markdown("Numerical data has a lot outliers and it's distribution is not normal")
+        cols = st.beta_columns(2)
+        with cols[0]:
+            raw_data = "downloads/raw_data.png"
+            st.image(raw_data, caption=None, width=None, use_column_width='always', output_format='PNG')
+        with cols[1]:
+            normal_dist = "downloads/normal_dist.png"
+            st.image(normal_dist, caption=None, width=None, use_column_width='always', output_format='PNG')
+        code = '''# # # #
+# # # Categorical features
+# # Replaces NaN with the most frequent value. Then OneHotEncoding is dividing data
+#
+categorical_features = ['Var1', 'Var2', 'Var4']
+cat_pipeline = Pipeline([
+    ("select_cat", utils.DataFrameSelector(categorical_features)),
+    ("impute", utils.MostFreqImputer()),
+    ("cat_encoder", utils.MyOneHotEncoder()),
+])
+'''
+        
+        st.code(code, language='python')
+    
     profiling_exp = st.beta_expander(label='Show pandas-profiling report')
     with profiling_exp:
         HtmlFile = open("downloads/pandas_report.html", 'r', encoding='utf-8')

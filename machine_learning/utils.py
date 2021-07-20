@@ -1,6 +1,6 @@
+import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-
 from sklearn.preprocessing import OneHotEncoder
 
 
@@ -70,4 +70,16 @@ class ToDf(BaseEstimator, TransformerMixin):
     
     def transform(self, X, y=None):
         df = pd.DataFrame(X)
+        return df
+
+
+class RemoveOutliers(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        df = pd.DataFrame(X)
+        self.mask = df.quantile(q=np.array([0.05, 0.95]), axis=0)
+        return self
+    
+    def transform(self, X, y=None):
+        df = pd.DataFrame(X)
+        df = df[(df > self.mask.iloc[0, :]) & (df < self.mask.iloc[1, :])]
         return df
