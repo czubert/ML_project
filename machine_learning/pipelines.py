@@ -8,8 +8,6 @@ from machine_learning import utils, transformers
 # # # Binary features
 # #
 #
-# WHAT: should I prepare data in case of NaN?
-
 binary_features = ['Gender', 'Mobile_Verified', 'Filled_Form', 'Device_Type', 'Var5']
 binary_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(binary_features)),

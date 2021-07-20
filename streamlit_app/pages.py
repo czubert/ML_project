@@ -3,7 +3,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 from joblib import load
 
-from streamlit_app import utils, descriptions, fake_data_preparation, preprocessing_descriptions
+from streamlit_app import utils, descriptions, fake_data_preparation
+from streamlit_app.preprocessing_page import numeric
 
 
 def show_main_content(df):
@@ -26,9 +27,9 @@ def show_main_content(df):
     #
     # # Preprocessing Description
     #
-    data_exp = st.beta_expander(label='Original data')
+    data_exp = st.beta_expander(label='Original data representation')
     with data_exp:
-        st.write(df)
+        st.write(df.head(100))
     
     #
     # # Preprocessing Description
@@ -51,16 +52,6 @@ def show_main_content(df):
 
 def show_data_profile():
     st.header('Data profiling')
-    numerical_data_exp = st.beta_expander(label='Show numerical data')
-    with numerical_data_exp:
-        st.markdown("Numerical data has a lot outliers and it's distribution is not normal")
-        cols = st.beta_columns(2)
-        with cols[0]:
-            raw_data = "downloads/raw_data.png"
-            st.image(raw_data, caption=None, width=None, use_column_width='always', output_format='PNG')
-        with cols[1]:
-            normal_dist = "downloads/normal_dist.png"
-            st.image(normal_dist, caption=None, width=None, use_column_width='always', output_format='PNG')
 
     profiling_exp = st.beta_expander(label='Show pandas-profiling report')
     with profiling_exp:
@@ -80,21 +71,18 @@ def show_data_profile():
         image = "downloads/snspairplot.png"
         st.image(image, caption=None, width=None, use_column_width='always', output_format='auto')
 
-
 def show_data_preprocessing():
     st.header('Data Preprocessing Description ')
-    numerical_data_exp = st.beta_expander(label='Show numerical data')
-    with numerical_data_exp:
-        st.markdown("Numerical data has a lot outliers and it's distribution is not normal")
-        cols = st.beta_columns(2)
-        with cols[0]:
-            raw_data = "downloads/raw_data.png"
-            st.image(raw_data, caption=None, width=None, use_column_width='always', output_format='PNG')
-        with cols[1]:
-            normal_dist = "downloads/normal_dist.png"
-            st.image(normal_dist, caption=None, width=None, use_column_width='always', output_format='PNG')
-        
-        st.code(preprocessing_descriptions.numerical_data, language='python')
+    numeric.get_numeric_description()
+    numeric.get_binary_description()
+    numeric.get_categorical_description()
+    numeric.get_dob_description()
+    numeric.get_submitted_description()
+    numeric.get_city_description()
+    numeric.get_salary_description()
+    numeric.get_employer_description()
+    numeric.get_source_description()
+    numeric.get_income_description()
 
 
 def show_predictions_page(df):

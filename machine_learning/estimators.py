@@ -63,14 +63,14 @@ classifiers = {
             'estimator': LogisticRegression(),
             'params':
                 {
-                    "classifier__class_weight": [None],
-                    "classifier__C": [0.1, 1, 10],
-                    "classifier__max_iter": [80, 90, 100, 110, 130],
-                    "classifier__solver": ['lbfgs'],
-                    "classifier__tol": [0.1],
-                    'selector__k': [100, 150],
-                    # 'decomposition__n_components': [110, 120, 130, 140, 150],
-                    'decomposition__n_components': [50, 80, 110, 130, 150],
+                    "classifier__class_weight": [None, 'balanced', {1: [1, 10, 100], 0: [0.1, 1, 10]}],
+                    "classifier__C": [1, 10],
+                    "classifier__max_iter": [90],
+                    "classifier__solver": ['saga'],
+                    "classifier__penalty": ['elasticnet', 'l1', 'l2'],
+                    "classifier__tol": [0.00001, 0.0001, 0.1],
+                    'selector__k': [100, 150, 200],
+                    'decomposition__n_components': [100, 150, 200],
                 }},
     
     # 'XGBoostClassifier':
