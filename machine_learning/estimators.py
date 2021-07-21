@@ -10,6 +10,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from joblib import dump
 # # feature selection
 from sklearn.decomposition import PCA
+from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
 from sklearn.feature_selection import SelectKBest
 # # metrics
 from sklearn.linear_model import LogisticRegression
@@ -21,6 +22,8 @@ from sklearn.model_selection import StratifiedKFold, GridSearchCV
 # # CV
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 SCORE_PATH = 'scores.csv'
 seed = 123
@@ -54,38 +57,42 @@ classifiers = {
     #                 'classifier__max_leaf_nodes': [50, 100],
     #                 'classifier__min_weight_fraction_leaf': [0, 1,10,100],
     #                 'classifier__min_samples_split': [0.1, 1,2,10,100],
-    #
-    #                 'selector__k': [40],
+    #                 'selector__k': [None,100,150,200],
     #             }},
     #
-    'LogisticRegression':
-        {
-            'name': 'LogisticRegression',
-            'estimator': LogisticRegression(),
-            'params':
-                {
-                    "classifier__class_weight": ['balanced'],
-                    "classifier__C": [1],
-                    "classifier__max_iter": [90],
-                    "classifier__solver": ['saga'],
-                    "classifier__penalty": ['l1'],
-                    "classifier__tol": [0.0001],
-                    'selector__k': [100, 150, 200],
-                    'decomposition__n_components': [30, 50, 100],
-                }},
-    
-    # 'XGBoostClassifier':
+    # # Done
+    # 'LogisticRegression':
     #     {
-    #         'name': 'XGBoostClassifier',
-    #         'estimator': XGBClassifier(),
+    #         'name': 'LogisticRegression',
+    #         'estimator': LogisticRegression(),
     #         'params':
     #             {
-    #                 'classifier__n_estimators': [100, 200],
-    #                 'classifier__max_depth': [10, 50, 100],
-    #                 'classifier__gamma': [1],
-    #                 'classifier__reg_alpha': [0],
-    #                 'classifier__reg_lambda': [0.2],
+    #                 "classifier__class_weight": ['balanced'],
+    #                 "classifier__C": [1],
+    #                 "classifier__max_iter": [90],
+    #                 "classifier__solver": ['saga'],
+    #                 "classifier__penalty": ['l1'],
+    #                 "classifier__tol": [0.0001],
+    #                 'selector__k': [100],
+    #                 'decomposition__n_components': [100],
     #             }},
+    #
+    'XGBoostClassifier':
+        {
+            'name': 'XGBoostClassifier',
+            'estimator': XGBClassifier(),
+            'params':
+                {
+                    'classifier__n_estimators': [100],
+                    'classifier__max_depth': [50, 100],
+                    'classifier__booster': ['gbtree', 'gblinear', 'dart'],
+                    'classifier__learning_rate': [DecisionTreeClassifier, RandomForestClassifier],
+                    'classifier__tree_method': [0.1, 1, 10],
+                    'classifier__gamma': [0.01, 0.1, 1],
+                    'classifier__reg_alpha': [0.01, 0.1, 1],
+                    'classifier__reg_lambda': [0.01, 0.1, 1],
+                    'selector__k': [50, 100],
+                }},
     
     # 'ExtraTreesClassifier':
     #     {
@@ -99,8 +106,12 @@ classifiers = {
     #                 'classifier__max_features': [1,10,50,100],
     #                 'classifier__min_samples_split': [1,2,5],
     #                 'classifier__min_samples_leaf': [1,2,5],
+    #                 'classifier__min_bootstrap': ['True'],  # to i nastepne dwa razem musza byc
+    #                 'classifier__min_oob_score': ['True'],
+    #                 'classifier__max_samples': [1,10,100],
+    #                 'selector__k': [50,100,150],
     #             }},
-    
+    # # Done
     # 'AdaBoostClassifier':
     #     {
     #         'name': 'AdaBoostClassifier',
@@ -148,7 +159,7 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
         tmp_pipe = Pipeline([
             # ('final_processing', final_processing_pipe),
             ('preprocessing', preprocess_pipeline),
-            ("scaler", StandardScaler(with_mean=False)),
+            ('scaler', StandardScaler(with_mean=False)),
             ('sampling', RandomUnderSampler(random_state=40)),
             ('selector', SelectKBest()),
             ('decomposition', PCA()),

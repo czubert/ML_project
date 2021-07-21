@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from joblib import load
 
 from streamlit_app import utils, descriptions, fake_data_preparation
-from streamlit_app.preprocessing_page import numeric
+from streamlit_app.preprocessing_page import descriptions
 
 
 def show_main_content(df):
@@ -73,16 +73,16 @@ def show_data_profile():
 
 def show_data_preprocessing():
     st.header('Data Preprocessing Description ')
-    numeric.get_numeric_description()
-    numeric.get_binary_description()
-    numeric.get_categorical_description()
-    numeric.get_dob_description()
-    numeric.get_submitted_description()
-    numeric.get_city_description()
-    numeric.get_salary_description()
-    numeric.get_employer_description()
-    numeric.get_source_description()
-    numeric.get_income_description()
+    descriptions.get_numeric_description()
+    descriptions.get_binary_description()
+    descriptions.get_categorical_description()
+    descriptions.get_dob_description()
+    descriptions.get_submitted_description()
+    descriptions.get_city_description()
+    descriptions.get_salary_description()
+    descriptions.get_employer_description()
+    descriptions.get_source_description()
+    descriptions.get_income_description()
 
 
 def show_predictions_page(df):
@@ -109,7 +109,7 @@ def show_predictions_page(df):
     
     # # All available models
     estimators = ['RandomForestClassifier', 'DecisionTreeClassifier', 'LogisticRegression',
-                  'XGBoostClassifier', 'SVC']
+                  'XGBoostClassifier', 'SVC', 'AdaBoostClassifier']
     st.markdown("---")
     
     # Choosing one or more models for predictions

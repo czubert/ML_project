@@ -47,9 +47,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 #
 preprocess_pipeline = pipelines.get_preprocessed_data(X_train)
 # X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
-# pd.DataFrame(preprocess_pipeline.fit_transform(X_train)).to_csv('preprocessed_X.csv')
 
-# num_yolo = pipelines.num_pipeline.fit_transform(X_train)
 
 #
 # # Machine Learning
