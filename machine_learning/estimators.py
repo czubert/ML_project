@@ -20,6 +20,7 @@ from sklearn.model_selection import StratifiedKFold, GridSearchCV
 
 # # CV
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
 SCORE_PATH = 'scores.csv'
 seed = 123
@@ -63,14 +64,14 @@ classifiers = {
             'estimator': LogisticRegression(),
             'params':
                 {
-                    "classifier__class_weight": [None, 'balanced', {1: [1, 10, 100], 0: [0.1, 1, 10]}],
-                    "classifier__C": [1, 10],
+                    "classifier__class_weight": ['balanced'],
+                    "classifier__C": [1],
                     "classifier__max_iter": [90],
                     "classifier__solver": ['saga'],
-                    "classifier__penalty": ['elasticnet', 'l1', 'l2'],
-                    "classifier__tol": [0.00001, 0.0001, 0.1],
+                    "classifier__penalty": ['l1'],
+                    "classifier__tol": [0.0001],
                     'selector__k': [100, 150, 200],
-                    'decomposition__n_components': [100, 150, 200],
+                    'decomposition__n_components': [30, 50, 100],
                 }},
     
     # 'XGBoostClassifier':
@@ -116,12 +117,15 @@ classifiers = {
     #         'estimator': SVC(),
     #         'params':
     #             {
-    #                 "classifier__kernel": ["poly"],
-    #                 "classifier__probability": [True],
-    #                 "classifier__gamma": ['scale','auto'],
-    #                 "classifier__degree": [1, 2, 3, 5, 10],
     #                 "classifier__C": [0.1, 1, 10],
+    #                 "classifier__kernel": ['poly','rbf','sigmoid','linear','precomputed', None],
+    #                 "classifier__degree": [1, 2, 3, 5, 10],
+    #                 "classifier__max_iter": [100, 500, -1],
+    #                 "classifier__gamma": ['scale','auto'],
+    #                 "classifier__tol": [0.00001, 0.001, 0.1],
+    #                 "classifier__probability": [True],
     #                 'selector__k': [40, 50, 60],
+    #                 'decomposition__n_components': [100, 150, 200],
     #             }},
 }
 

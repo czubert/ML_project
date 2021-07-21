@@ -1,17 +1,19 @@
 import warnings
 
+from machine_learning import estimators
 import pandas as pd
 #
 # # warnings
 #
 # import shutup
+# shutup.please()
 from sklearn.model_selection import train_test_split
 
 from machine_learning import pipelines
 
 SCORES = 'downloads/scores.csv'
 
-# shutup.please()
+
 warnings.filterwarnings("ignore")
 
 #
@@ -45,7 +47,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 #
 preprocess_pipeline = pipelines.get_preprocessed_data(X_train)
 # X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
-pd.DataFrame(preprocess_pipeline.fit_transform(X_train)).to_csv('preprocessed_X.csv')
+# pd.DataFrame(preprocess_pipeline.fit_transform(X_train)).to_csv('preprocessed_X.csv')
 
 # num_yolo = pipelines.num_pipeline.fit_transform(X_train)
 
@@ -62,4 +64,4 @@ ml_variables = {
     'y_test': y_test,
 }
 
-# scores, models = estimators.get_best_classsifier(**ml_variables)
+scores, models = estimators.get_best_classsifier(**ml_variables)
