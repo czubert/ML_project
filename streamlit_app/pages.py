@@ -4,7 +4,8 @@ import streamlit.components.v1 as components
 from joblib import load
 
 from streamlit_app import utils, descriptions, fake_data_preparation
-from streamlit_app.preprocessing_page import descriptions
+from streamlit_app.preprocessing_page import preprocess_descriptions
+from glob import glob
 
 
 def show_main_content(df):
@@ -73,30 +74,31 @@ def show_data_profile():
 
 def show_data_preprocessing():
     st.header('Data Preprocessing Description ')
-    descriptions.get_numeric_description()
-    descriptions.get_binary_description()
-    descriptions.get_categorical_description()
-    descriptions.get_dob_description()
-    descriptions.get_submitted_description()
-    descriptions.get_city_description()
-    descriptions.get_salary_description()
-    descriptions.get_employer_description()
-    descriptions.get_source_description()
-    descriptions.get_income_description()
+    preprocess_descriptions.get_numeric_description()
+    preprocess_descriptions.get_binary_description()
+    preprocess_descriptions.get_categorical_description()
+    preprocess_descriptions.get_dob_description()
+    preprocess_descriptions.get_submitted_description()
+    preprocess_descriptions.get_city_description()
+    preprocess_descriptions.get_salary_description()
+    preprocess_descriptions.get_employer_description()
+    preprocess_descriptions.get_source_description()
+    preprocess_descriptions.get_income_description()
 
 
 def show_predictions_page(df):
     # Expander to prepare fake data
-    fake_data_exp = st.beta_expander('Create your own data and predict if "Disbursed"')
+    customer_data_exp = st.beta_expander('Create your own data and predict if "Disbursed"')
     
-    with fake_data_exp:
-        fake_df = pd.DataFrame(fake_data_preparation.create_fake_data(df), index=['Fake data'])  # creating fake data
-        st.write(fake_df)  # showing fake data
+    with customer_data_exp:
+        customer_data = pd.DataFrame(fake_data_preparation.create_fake_data(df),
+                                     index=['Fake data'])  # creating fake data
+        st.write(customer_data)  # showing fake data
     
     #
     # # Data
     #
-    possible_data = {'Created data': fake_df, 'Example data': fake_df, 'Uploaded data': fake_df}
+    possible_data = {'Created data': customer_data, 'Example data': customer_data, 'Uploaded data': customer_data}
     st.markdown('#### Choose what data would you like to use for predictions')
     chosen_data = st.radio('Choose what data would you like to use for predictions', possible_data)
     
@@ -105,26 +107,56 @@ def show_predictions_page(df):
     #
     
     # # Importing Scores
-    scores = pd.read_csv('scores.csv')
+    scores = pd.read_csv('models/scores.csv', index_col='Unnamed: 0')
     
     # # All available models
-    estimators = ['RandomForestClassifier', 'DecisionTreeClassifier', 'LogisticRegression',
-                  'XGBoostClassifier', 'SVC', 'AdaBoostClassifier']
+    estimators = scores.columns
     st.markdown("---")
     
-    # Choosing one or more models for predictions
+    # Choosing one or more models for predictions (only estimators that have calculated scores)
     st.markdown('#### Select trained models to use for predictions')
     chosen_estimators = st.multiselect('', estimators)
     
-    # Estimating the "Disbursed"
-    if chosen_estimators is not None:
+    # Estimating the "Disbursed" feature
+    if chosen_estimators is not None:  # Works only if any estimator is selected
         st.markdown("##### Predictions for you: ")
         st.markdown('')
+        
+        best_params_of_chosen_estimators = []
+        
         for chosen_estimator in chosen_estimators:
             model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
             st.write(f'{chosen_estimator} prediction: {model.predict(possible_data[chosen_data])[0]}')
+            
+            list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
+            best_params_dict = dict()
+            
+            # Getting names and values of best parameters from grid search results
+            for el in list_of_best_params:
+                key, value = el.split(':')
+                key = key.strip().strip("'")
+                value = value.strip()
+                best_params_dict[key] = value
+            
+            # DataFrame of best params for chosen estimator
+            best_params_df = pd.DataFrame(best_params_dict.values(),
+                                          index=best_params_dict.keys(),
+                                          columns=[chosen_estimator])
+            
+            best_params_of_chosen_estimators.append(best_params_df)
+        
+        # D ataFrame of best params for chosen estimators
+        if len(best_params_of_chosen_estimators) == 1:
+            final_best_params_df = best_params_of_chosen_estimators[0]
+        elif len(best_params_of_chosen_estimators) > 1:
+            final_best_params_df = pd.concat(best_params_of_chosen_estimators, axis=0)
+        
+        # DataFrame of scores train/val/test
+        scores_for_chosen_estimators = scores.loc[:, chosen_estimators].drop(['best_params'], axis=0)
         
         st.markdown("---")
-        st.markdown("#### Scores for chosen estimators on training/validation/test data:")
-        st.markdown("")
-        st.write(scores.loc[:, chosen_estimators])
+        if any(estimators) is any(chosen_estimators):
+            st.markdown("#### Chosen models were trained, validated, and tested withwith following scores:")
+            st.markdown("")
+            # Showing a DataFrame of scores and best params for chosen estimators
+            st.write(pd.concat([scores_for_chosen_estimators, final_best_params_df], axis=0))

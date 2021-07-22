@@ -1,5 +1,0 @@
-XGBoostClassifier
-"{'classifier__gamma': 10, 'classifier__max_depth': 50, 'classifier__n_estimators': 100, 'classifier__reg_alpha': 0, 'classifier__reg_lambda': 0.2, 'selector__k': 50}"
-0.8623263134034391
-0.8014252299016309
-0.7961656942823805

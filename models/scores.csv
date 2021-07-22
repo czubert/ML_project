@@ -1,5 +1,6 @@
-XGBoostClassifier
-"{'classifier__gamma': 10, 'classifier__max_depth': 50, 'classifier__n_estimators': 100, 'classifier__reg_alpha': 0, 'classifier__reg_lambda': 0.2, 'selector__k': 50}"
-0.8623263134034391
-0.8014252299016309
-0.7961656942823805
+Unnamed: 0,LogisticRegression,AdaBoostClassifier
+best_params,"{'classifier__C': 1, 'classifier__class_weight': 'balanced', 'classifier__max_iter': 90, 'classifier__penalty': 'l1', 'classifier__solver': 'saga', 'classifier__tol': 0.0001, 'decomposition__n_components': 100, 'selector__k': 100}","{'classifier__learning_rate': 0.1, 'classifier__n_estimators': 500}"
+best_score,0.8128678492012323,0.8208092990949037
+roc_auc_score_train,0.830823836375401,0.8406232253436597
+roc_auc_score_val,0.8180672241981479,0.8221692460508186
+roc_auc_score_test,0.8132200700116685,0.8133815635939323
