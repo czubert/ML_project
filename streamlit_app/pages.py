@@ -133,6 +133,7 @@ def show_predictions_page(df):
             
             # Getting names and values of best parameters from grid search results
             for el in list_of_best_params:
+                st.write(el)
                 key, value = el.split(':')
                 key = key.strip().strip("'")
                 value = value.strip()

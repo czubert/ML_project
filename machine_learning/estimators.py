@@ -29,16 +29,16 @@ SCORE_PATH = 'scores.csv'
 SEED = 123
 classifiers = {
     # # Done
-    'AdaBoostClassifier':
-        {
-            'name': 'AdaBoostClassifier',
-            'estimator': AdaBoostClassifier(),
-            'params':
-                {
-                    'classifier__n_estimators': [500],
-                    'classifier__learning_rate': [0.1],
-                }},
-    # # # Done
+    # 'AdaBoostClassifier':
+    #     {
+    #         'name': 'AdaBoostClassifier',
+    #         'estimator': AdaBoostClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [500],
+    #                 'classifier__learning_rate': [0.1],
+    #             }},
+    # # Done
     # 'LogisticRegression':
     #     {
     #         'name': 'LogisticRegression',
@@ -70,28 +70,28 @@ classifiers = {
     #                 'selector__k': [100],
     #                 'decomposition__n_components': [90],
     #             }},
-    # # Done
-    # 'XGBoostClassifier':
-    #     {
-    #         'name': 'XGBoostClassifier',
-    #         'estimator': XGBClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [1000],
-    #                 'classifier__learning_rate': [0.01],
-    #                 'classifier__max_depth': [4],
-    #                 'classifier__objective': ['binary:logistic'],
-    #                 'classifier__booster': ['gbtree'],
-    #                 'classifier__tree_method': ['auto'],
-    #                 'classifier__gamma': [0],
-    #                 'classifier__min_child_weight': [6],
-    #                 'classifier__reg_alpha': [0.005],
-    #                 'classifier__reg_lambda': [0.01],
-    #                 'classifier__subsample': [0.9],
-    #                 'classifier__colsample_bytree': [0.8],
-    #                 'selector__k': [150],
-    #                 'decomposition__n_components': [None],
-    #             }},
+    #
+    # # # Done
+    'XGBoostClassifier':
+        {
+            'name': 'XGBoostClassifier',
+            'estimator': XGBClassifier(),
+            'params':
+                {
+                    'classifier__n_estimators': [1000],
+                    'classifier__learning_rate': [0.01],
+                    'classifier__max_depth': [4],
+                    'classifier__objective': ['binary:logistic'],
+                    'classifier__booster': ['gbtree'],
+                    'classifier__tree_method': ['auto'],
+                    'classifier__gamma': [0],
+                    'classifier__min_child_weight': [6],
+                    'classifier__reg_alpha': [0.005],
+                    'classifier__reg_lambda': [0.01],
+                    'classifier__subsample': [0.9],
+                    'classifier__colsample_bytree': [0.8],
+                    'selector__k': [150],
+                }},
     
     # 'RandomForestClassifier':
     #     {
@@ -122,8 +122,6 @@ classifiers = {
     #                 'classifier__max_features': [1,10,50,100],
     #                 'classifier__min_samples_split': [1,2,5],
     #                 'classifier__min_samples_leaf': [1,2,5],
-    #                 'classifier__min_bootstrap': ['True'],  # to i nastepne dwa razem musza byc
-    #                 'classifier__min_oob_score': ['True'],
     #                 'classifier__max_samples': [1,10,100],
     #                 'selector__k': [50,100,150],
     #             }},
@@ -167,10 +165,11 @@ def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y
             ('preprocessing', preprocess_pipeline),
             ('scaler', StandardScaler(with_mean=False)),
             ('sampling', RandomUnderSampler(random_state=40)),
-            # ('selector', SelectKBest()),
+            ('selector', SelectKBest()),
             # ('decomposition', PCA()),
             ('classifier', value['estimator'])
         ])
+
         # WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?
         grid = GridSearchCV(tmp_pipe, value['params'], cv=kfold, scoring='roc_auc')
         grid.fit(X_train, y_train)
