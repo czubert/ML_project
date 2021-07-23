@@ -1,3 +1,5 @@
+import io
+
 import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
@@ -165,10 +167,18 @@ def show_predictions_page(df):
 
     if chosen_data == 'Uploaded data':
         # # Uploaded Data provided by the user
-        uploaded_data = st.file_uploader('Upload data for tests')
+        uploaded_data = st.file_uploader('Upload data for tests',
+                                         accept_multiple_files=True,
+                                         type=['txt', 'csv'])
+    
         if uploaded_data is not None:
-            st.write(pd.DataFrame(uploaded_data))
-            processing_data = uploaded_data
+            # lines = uploaded_data[0].readlines()
+            # lines = [line.decode('utf-8') for line in lines]
+            st.write()
+            text_file = uploaded_data[0].read().decode('utf-8')
+        
+            processing_data = pd.read_csv(io.StringIO(text_file), sep=',')
+            st.write(processing_data)
         else:
             st.stop()
     
