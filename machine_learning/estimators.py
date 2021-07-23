@@ -90,6 +90,24 @@ classifiers = {
     #                 'decomposition__n_components': [90],
     #             }},
     
+    # # DOne
+    'RandomForestClassifier':
+        {
+            'name': 'RandomForestClassifier',
+            'estimator': RandomForestClassifier(),
+            'params':
+                {
+                    'classifier__n_estimators': list(range(100, 1000, 100)),
+                    'classifier__criterion': ['gini'],
+                    'classifier__max_features': [0.5],
+                    'classifier__max_depth': [10],
+                    'classifier__max_leaf_nodes': [150],
+                    'classifier__min_samples_split': [5],
+                    'classifier__bootstrap': [True],
+                    'classifier__max_samples': [150],
+                    'selector__k': [150],
+                }},
+    
     # # Done
     # 'XGBoostClassifier':
     #     {
@@ -111,23 +129,6 @@ classifiers = {
     #                 'classifier__colsample_bytree': [0.8],
     #                 'selector__k': [150],
     #             }},
-    
-    'RandomForestClassifier':
-        {
-            'name': 'RandomForestClassifier',
-            'estimator': RandomForestClassifier(),
-            'params':
-                {
-                    'classifier__n_estimators': [1000],
-                    'classifier__criterion': ['gini'],
-                    'classifier__max_features': [0.5],
-                    'classifier__max_depth': [10],
-                    'classifier__max_leaf_nodes': [150],
-                    'classifier__min_samples_split': [5],
-                    'classifier__bootstrap': [True, False],
-                    'classifier__max_samples': [150],
-                    'selector__k': [150],
-                }},
     
     # 'ExtraTreesClassifier':
     #     {

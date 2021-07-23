@@ -203,7 +203,7 @@ def show_predictions_page(df):
         best_params_of_chosen_estimators = []
         
         for chosen_estimator in chosen_estimators:
-            model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
+            model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
     
             # Showing predictions for Customer data
             if chosen_data == 'Customer data':
@@ -215,7 +215,12 @@ def show_predictions_page(df):
                 predictions = pd.DataFrame(model.predict(processing_data),
                                            columns=['Predictions'],
                                            index=processing_data.ID)
+    
+                st.markdown(f"#### Predictions for {chosen_estimator}: ")
+                st.markdown('')
+    
                 prediction_cols = st.beta_columns((1, 4))
+    
                 with prediction_cols[0]:
                     st.markdown("##### Predictions for you: ")
                     st.markdown('')
@@ -224,7 +229,7 @@ def show_predictions_page(df):
                     st.markdown("##### Predictions Summary:")
                     st.markdown('')
                     st.write(predictions.iloc[:, 0].value_counts())
-    
+
             list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
             best_params_dict = dict()
     
