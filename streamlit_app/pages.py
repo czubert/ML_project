@@ -123,30 +123,33 @@ def show_predictions_page(df):
     if chosen_data == 'Customer data':
         # # Customer Data
         CUSTOMER_PATH = 'customer.csv'
-    
+
         processing_data = pd.DataFrame()
         customer_data_exp = st.beta_expander('Create Customer data and predict if "Disbursed"')
+        input_cols = st.beta_columns((1, 5))
+        with input_cols[0]:
+            customer_name = st.text_input('Enter customer name')
         with customer_data_exp:
             customer_data = pd.DataFrame(
-                fake_data_preparation.create_customer_data(df), index=[1])  # creating customer profile data
-    
-        cols = st.beta_columns((1, 5))
+                fake_data_preparation.create_customer_data(df), index=[customer_name])  # creating customer profile data
+        button_cols = st.beta_columns((1, 5))
+
         # button to add new profiles
-        with cols[0]:
+        with button_cols[0]:
             if st.button('Add Customer profile'):
                 try:
-                    customers_profiles = pd.read_csv(CUSTOMER_PATH, index_col='Unnamed: 0')
-                    customers_profiles = pd.concat([customers_profiles, customer_data])
+                    customers_profiles_loaded = pd.read_csv(CUSTOMER_PATH, index_col='Unnamed: 0')
+                    customers_profiles = pd.concat([customers_profiles_loaded, customer_data])
                     customers_profiles.to_csv(CUSTOMER_PATH)
                 except FileNotFoundError:
                     customer_data.to_csv(CUSTOMER_PATH)
         # button to reset added profiles
-        with cols[1]:
+        with button_cols[1]:
             if st.button('Reset Customer Profiles'):
                 pd.DataFrame().to_csv(CUSTOMER_PATH)
 
         try:
-            processing_data = pd.read_csv(CUSTOMER_PATH)
+            processing_data = pd.read_csv(CUSTOMER_PATH, index_col='Unnamed: 0')
             if processing_data.empty:
                 st.write('')
             else:
@@ -154,7 +157,6 @@ def show_predictions_page(df):
         except FileNotFoundError:
             st.write('')
 
-        st.write(processing_data)
     if chosen_data == 'Example data':
         # # Example Data provided by the Bank
         bank_data = pd.read_csv('data/test.csv')
@@ -191,11 +193,14 @@ def show_predictions_page(df):
         
         for chosen_estimator in chosen_estimators:
             model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
-            st.write(f'{chosen_estimator}, prediction(s): {model.predict(processing_data)}')
-            
+            st.write(f'{chosen_estimator}, '
+                     # f'prediction(s):{list(processing_data.index)}, '
+                     # f'{list(model.predict(processing_data))}'
+                     f'{list(zip(processing_data.index, model.predict(processing_data)))}')
+    
             list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
             best_params_dict = dict()
-            
+    
             # # Getting names and values of best parameters from grid search results
             for el in list_of_best_params:
                 key, value = el.split(sep=':', maxsplit=1)

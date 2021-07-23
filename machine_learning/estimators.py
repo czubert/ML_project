@@ -118,14 +118,14 @@ classifiers = {
             'estimator': RandomForestClassifier(),
             'params':
                 {
-                    'classifier__n_estimators': [100],
+                    'classifier__n_estimators': [1000],
                     'classifier__criterion': ['gini'],
                     'classifier__max_features': [0.5],
-                    'classifier__max_depth': [9, 10, 11],
-                    'classifier__max_leaf_nodes': [50, 100, 150],
-                    'classifier__min_samples_split': [3, 5],
-                    # 'classifier__bootstrap': [True, False],
-                    'classifier__max_samples': [50, 100, 150],
+                    'classifier__max_depth': [10],
+                    'classifier__max_leaf_nodes': [150],
+                    'classifier__min_samples_split': [5],
+                    'classifier__bootstrap': [True, False],
+                    'classifier__max_samples': [150],
                     'selector__k': [150],
                 }},
     
