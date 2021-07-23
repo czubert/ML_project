@@ -131,6 +131,7 @@ def show_predictions_page(df):
                 fake_data_preparation.create_customer_data(df), index=[1])  # creating customer profile data
     
         cols = st.beta_columns((1, 5))
+        # button to add new profiles
         with cols[0]:
             if st.button('Add Customer profile'):
                 try:
@@ -139,9 +140,11 @@ def show_predictions_page(df):
                     customers_profiles.to_csv(CUSTOMER_PATH)
                 except FileNotFoundError:
                     customer_data.to_csv(CUSTOMER_PATH)
+        # button to reset added profiles
         with cols[1]:
             if st.button('Reset Customer Profiles'):
                 pd.DataFrame().to_csv(CUSTOMER_PATH)
+
         try:
             processing_data = pd.read_csv(CUSTOMER_PATH)
             if processing_data.empty:
@@ -151,6 +154,7 @@ def show_predictions_page(df):
         except FileNotFoundError:
             st.write('')
 
+        st.write(processing_data)
     if chosen_data == 'Example data':
         # # Example Data provided by the Bank
         bank_data = pd.read_csv('data/test.csv')
@@ -187,7 +191,7 @@ def show_predictions_page(df):
         
         for chosen_estimator in chosen_estimators:
             model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
-            st.write(f'{chosen_estimator} prediction: {model.predict(processing_data)[0]}')
+            st.write(f'{chosen_estimator}, prediction(s): {model.predict(processing_data)}')
             
             list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
             best_params_dict = dict()
