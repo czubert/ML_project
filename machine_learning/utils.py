@@ -83,3 +83,15 @@ class RemoveOutliers(BaseEstimator, TransformerMixin):
         df = pd.DataFrame(X)
         df = df[(df > self.mask.iloc[0, :]) & (df < self.mask.iloc[1, :])]
         return df
+
+
+def save_to_file(df, path, df_index):
+    try:
+        saved_scores = pd.read_csv(path)
+        saved_scores.index = df_index
+        scores = pd.concat([saved_scores, df], axis=1)
+        scores.index = df_index
+        scores.to_csv(path, index=False)
+    except FileNotFoundError:
+        scores.index = df_index
+        scores.to_csv(path, index=True)

@@ -29,16 +29,6 @@ SCORE_PATH = 'scores.csv'
 SEED = 123
 classifiers = {
     # # Done
-    # 'AdaBoostClassifier':
-    #     {
-    #         'name': 'AdaBoostClassifier',
-    #         'estimator': AdaBoostClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [500],
-    #                 'classifier__learning_rate': [0.1],
-    #             }},
-    # # Done
     # 'LogisticRegression':
     #     {
     #         'name': 'LogisticRegression',
@@ -54,6 +44,35 @@ classifiers = {
     #                 'selector__k': [100],
     #                 'decomposition__n_components': [100],
     #             }},
+    
+    # # Done
+    # 'SVC':
+    #     {
+    #         'name': 'SVC',
+    #         'estimator': SVC(),
+    #         'params':
+    #             {
+    #                 "classifier__C": [2],
+    #                 "classifier__kernel": ['rbf'],
+    #                 "classifier__degree": [1],
+    #                 "classifier__max_iter": [-1],
+    #                 "classifier__gamma": ['auto'],
+    #                 "classifier__tol": [0.1],
+    #                 "classifier__probability": [True],
+    #                 'selector__k': [150],
+    #             }},
+    
+    # # Done
+    # 'AdaBoostClassifier':
+    #     {
+    #         'name': 'AdaBoostClassifier',
+    #         'estimator': AdaBoostClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [500],
+    #                 'classifier__learning_rate': [0.1],
+    #             }},
+    
     # # Done
     # 'DecisionTreeClassifier':
     #     {
@@ -70,8 +89,8 @@ classifiers = {
     #                 'selector__k': [100],
     #                 'decomposition__n_components': [90],
     #             }},
-    #
-    # # # Done
+    
+    # # Done
     # 'XGBoostClassifier':
     #     {
     #         'name': 'XGBoostClassifier',
@@ -93,22 +112,22 @@ classifiers = {
     #                 'selector__k': [150],
     #             }},
     
-    # 'RandomForestClassifier':
-    #     {
-    #         'name': 'RandomForestClassifier',
-    #         'estimator': RandomForestClassifier(),
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [50, 100, 150, 250, 500],  # sprobowac jeszcze jakies dodac
-    #                 # 'classifier__criterion': ['gini','entropy'],
-    #                 # 'classifier__max_features': [0.3,0.4,0.5],
-    #                 # 'classifier__max_depth': [5, 10, 16],
-    #                 # 'classifier__max_leaf_nodes': [10, 30, 50, 100],
-    #                 # 'classifier__min_samples_split': [1, 2, 3],
-    #                 # 'classifier__bootstrap': [True, False],
-    #                 # 'classifier__max_samples': [1, 10, 100],
-    #                 # 'selector__k': [None,100,150,200],
-    #             }},
+    'RandomForestClassifier':
+        {
+            'name': 'RandomForestClassifier',
+            'estimator': RandomForestClassifier(),
+            'params':
+                {
+                    'classifier__n_estimators': [100],
+                    'classifier__criterion': ['gini', 'entropy'],
+                    'classifier__max_features': [0.3, 0.4, 0.5],
+                    'classifier__max_depth': [5, 10],
+                    'classifier__max_leaf_nodes': [10, 100],
+                    'classifier__min_samples_split': [1, 3],
+                    # 'classifier__bootstrap': [True, False],
+                    'classifier__max_samples': [1, 100],
+                    'selector__k': [150],
+                }},
     
     # 'ExtraTreesClassifier':
     #     {
@@ -126,22 +145,6 @@ classifiers = {
     #                 'selector__k': [50,100,150],
     #             }},
     
-    'SVC':
-        {
-            'name': 'SVC',
-            'estimator': SVC(),
-            'params':
-                {
-                    "classifier__C": [2],
-                    "classifier__kernel": ['rbf'],
-                    "classifier__degree": [1],
-                    "classifier__max_iter": [10, 100, 500, -1],
-                    "classifier__gamma": ['auto'],
-                    "classifier__tol": [0.1],
-                    "classifier__probability": [True],
-                    'selector__k': [150],
-                    # 'decomposition__n_components': [50,100],
-                }},
 }
 
 kfold = StratifiedKFold(n_splits=5, random_state=SEED, shuffle=True)

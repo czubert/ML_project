@@ -119,23 +119,44 @@ def show_predictions_page(df):
     possible_data = ['Customer data', 'Example data', 'Uploaded data']
     st.markdown('#### Choose what data would you like to use for predictions')
     chosen_data = st.radio('', possible_data)
-    
+
     if chosen_data == 'Customer data':
         # # Customer Data
+        CUSTOMER_PATH = 'customer.csv'
+    
+        processing_data = pd.DataFrame()
         customer_data_exp = st.beta_expander('Create Customer data and predict if "Disbursed"')
         with customer_data_exp:
-            customer_data = pd.DataFrame(fake_data_preparation.create_customer_data(df),
-                                         index=['Fake data'])  # creating customer profile data
-            st.write(customer_data)  # showing Customer data
-        
-        processing_data = customer_data
+            customer_data = pd.DataFrame(
+                fake_data_preparation.create_customer_data(df), index=[1])  # creating customer profile data
     
+        cols = st.beta_columns((1, 5))
+        with cols[0]:
+            if st.button('Add Customer profile'):
+                try:
+                    customers_profiles = pd.read_csv(CUSTOMER_PATH, index_col='Unnamed: 0')
+                    customers_profiles = pd.concat([customers_profiles, customer_data])
+                    customers_profiles.to_csv(CUSTOMER_PATH)
+                except FileNotFoundError:
+                    customer_data.to_csv(CUSTOMER_PATH)
+        with cols[1]:
+            if st.button('Reset Customer Profiles'):
+                pd.DataFrame().to_csv(CUSTOMER_PATH)
+        try:
+            processing_data = pd.read_csv(CUSTOMER_PATH)
+            if processing_data.empty:
+                st.write('')
+            else:
+                st.write(processing_data)
+        except FileNotFoundError:
+            st.write('')
+
     if chosen_data == 'Example data':
         # # Example Data provided by the Bank
         bank_data = pd.read_csv('data/test.csv')
-        
-        processing_data = bank_data
     
+        processing_data = bank_data
+
     if chosen_data == 'Uploaded data':
         # # Uploaded Data provided by the user
         uploaded_data = st.file_uploader('Upload data for tests')
