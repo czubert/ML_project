@@ -47,7 +47,6 @@ def main():
         # # #
         # # Machine Learning part
         #
-        st.sidebar.file_uploader('Upload data for tests')
         pages.show_predictions_page(df)
     
 

@@ -1,5 +1,0 @@
-XGBoostClassifier,LogisticRegression,AdaBoostClassifier,DecisionTreeClassifier
-"{'classifier__gamma': 10, 'classifier__max_depth': 50, 'classifier__n_estimators': 100, 'classifier__reg_alpha': 0, 'classifier__reg_lambda': 0.2, 'selector__k': 50}","{'classifier__C': 1, 'classifier__class_weight': 'balanced', 'classifier__max_iter': 90, 'classifier__penalty': 'l1', 'classifier__solver': 'saga', 'classifier__tol': 0.0001, 'decomposition__n_components': 100, 'selector__k': 100}","{'classifier__learning_rate': 0.1, 'classifier__n_estimators': 500}","{'classifier__criterion': 'gini', 'classifier__max_depth': 10, 'classifier__max_features': 0.5, 'classifier__max_leaf_nodes': 10, 'classifier__min_samples_split': 5, 'classifier__min_weight_fraction_leaf': 0.01, 'decomposition__n_components': 90, 'selector__k': 100}"
-0.8623263134034391,0.8308102787336665,0.8289081057388477,0.7634114419462265
-0.8014252299016309,0.8180390272036913,0.8149328719279696,0.7439309173635811
-0.7961656942823805,0.8132387397899651,0.7922445740956826,0.7748714119019837

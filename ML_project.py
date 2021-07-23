@@ -1,26 +1,21 @@
 import warnings
-
 from machine_learning import estimators
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from machine_learning import pipelines
+
 #
 # # warnings
 #
-# import shutup
-# shutup.please()
-from sklearn.model_selection import train_test_split
-
-from machine_learning import pipelines
-
-SCORES = 'downloads/scores.csv'
-
-
 warnings.filterwarnings("ignore")
+
+# Path to scores
+SCORES = 'downloads/scores.csv'
 
 #
 # # Data for classification
 #
 data = pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
-test = pd.read_csv('data/Test_bCtAN1w.csv', encoding="latin1")
 
 #
 # # Getting rid of irrelevant features
@@ -45,9 +40,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.
 #
 # # Preprocessing data
 #
-preprocess_pipeline = pipelines.get_preprocessed_data(X_train)
-# X_train_prep_filled = preprocess_pipeline.fit_transform(X_train)
-
+preprocess_pipeline = pipelines.get_preprocessed_data()
 
 #
 # # Machine Learning

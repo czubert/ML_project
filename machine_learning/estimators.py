@@ -72,26 +72,26 @@ classifiers = {
     #             }},
     #
     # # # Done
-    'XGBoostClassifier':
-        {
-            'name': 'XGBoostClassifier',
-            'estimator': XGBClassifier(),
-            'params':
-                {
-                    'classifier__n_estimators': [1000],
-                    'classifier__learning_rate': [0.01],
-                    'classifier__max_depth': [4],
-                    'classifier__objective': ['binary:logistic'],
-                    'classifier__booster': ['gbtree'],
-                    'classifier__tree_method': ['auto'],
-                    'classifier__gamma': [0],
-                    'classifier__min_child_weight': [6],
-                    'classifier__reg_alpha': [0.005],
-                    'classifier__reg_lambda': [0.01],
-                    'classifier__subsample': [0.9],
-                    'classifier__colsample_bytree': [0.8],
-                    'selector__k': [150],
-                }},
+    # 'XGBoostClassifier':
+    #     {
+    #         'name': 'XGBoostClassifier',
+    #         'estimator': XGBClassifier(),
+    #         'params':
+    #             {
+    #                 'classifier__n_estimators': [1000],
+    #                 'classifier__learning_rate': [0.01],
+    #                 'classifier__max_depth': [4],
+    #                 'classifier__objective': ['binary:logistic'],
+    #                 'classifier__booster': ['gbtree'],
+    #                 'classifier__tree_method': ['auto'],
+    #                 'classifier__gamma': [0],
+    #                 'classifier__min_child_weight': [6],
+    #                 'classifier__reg_alpha': [0.005],
+    #                 'classifier__reg_lambda': [0.01],
+    #                 'classifier__subsample': [0.9],
+    #                 'classifier__colsample_bytree': [0.8],
+    #                 'selector__k': [150],
+    #             }},
     
     # 'RandomForestClassifier':
     #     {
@@ -125,43 +125,48 @@ classifiers = {
     #                 'classifier__max_samples': [1,10,100],
     #                 'selector__k': [50,100,150],
     #             }},
-
-    # 'SVC':
-    #     {
-    #         'name': 'SVC',
-    #         'estimator': SVC(),
-    #         'params':
-    #             {
-    #                 "classifier__C": [0.1, 1, 10],
-    #                 "classifier__kernel": ['poly','rbf','sigmoid','linear','precomputed', None],
-    #                 "classifier__degree": [1, 2, 3, 5, 10],
-    #                 "classifier__max_iter": [100, 500, -1],
-    #                 "classifier__gamma": ['scale','auto'],
-    #                 "classifier__tol": [0.00001, 0.001, 0.1],
-    #                 "classifier__probability": [True],
-    #                 'selector__k': [40, 50, 60],
-    #                 'decomposition__n_components': [100, 150, 200],
-    #             }},
+    
+    'SVC':
+        {
+            'name': 'SVC',
+            'estimator': SVC(),
+            'params':
+                {
+                    "classifier__C": [2],
+                    "classifier__kernel": ['rbf'],
+                    "classifier__degree": [1],
+                    "classifier__max_iter": [10, 100, 500, -1],
+                    "classifier__gamma": ['auto'],
+                    "classifier__tol": [0.1],
+                    "classifier__probability": [True],
+                    'selector__k': [150],
+                    # 'decomposition__n_components': [50,100],
+                }},
 }
 
 kfold = StratifiedKFold(n_splits=5, random_state=SEED, shuffle=True)
 
 
 def get_best_classsifier(preprocess_pipeline, X_train, X_val, X_test, y_train, y_test, y_val):
-    # TODO make preprocessing adasyn etc before the loop, not to repeat this fo each estimators
-    # final_processing_pipe = Pipeline([
-    #     ('preprocessing', preprocess_pipeline),
-    #     ('sampling', ADASYN(random_state=55)),
-    #     ('selector', SelectKBest(k=k_best)),
-    #     ('decomposition', PCA()),
-    # ])
+    """
+    Getting the best models for all passed estimators and saves it to joblib file.
+    Using GridSearchCV for the getting the best params. Saving scores to csv file
+    :param preprocess_pipeline: Pipeline that preprocess the data
+    :param X_train: DataFrame of data for training
+    :param X_val:  DataFrame of data for validation
+    :param X_test: DataFrame of data for testing
+    :param y_train: DataFrame of labels for training
+    :param y_val: DataFrame of labels for validation
+    :param y_test: DataFrame of labels for testing
+    :return: DataFrame of obtained scores for each estimator, Dict of trained models
+    """
+    
     scores_index = ['best_params', 'best_score', 'roc_auc_score_train', 'roc_auc_score_val', 'roc_auc_score_test']
     scores = pd.DataFrame(index=scores_index)
     models = {}
     
     for key, value in classifiers.items():
         tmp_pipe = Pipeline([
-            # ('final_processing', final_processing_pipe),
             ('preprocessing', preprocess_pipeline),
             ('scaler', StandardScaler(with_mean=False)),
             ('sampling', RandomUnderSampler(random_state=40)),

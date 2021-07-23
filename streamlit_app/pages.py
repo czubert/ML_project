@@ -5,10 +5,14 @@ from joblib import load
 
 from streamlit_app import utils, descriptions, fake_data_preparation
 from streamlit_app.preprocessing_page import preprocess_descriptions
-from glob import glob
 
 
 def show_main_content(df):
+    """
+    Showing main page in streamlit
+    :param df: DataFrame with raw data
+    """
+    
     #
     # # Project logo
     #
@@ -52,8 +56,11 @@ def show_main_content(df):
 
 
 def show_data_profile():
+    """
+    Showing data profiling. Tools used: pandas-profiling report, Plotly scatter matrix and seaborn pairplot
+    """
     st.header('Data profiling')
-
+    
     profiling_exp = st.beta_expander(label='Show pandas-profiling report')
     with profiling_exp:
         HtmlFile = open("downloads/pandas_report.html", 'r', encoding='utf-8')
@@ -72,7 +79,11 @@ def show_data_profile():
         image = "downloads/snspairplot.png"
         st.image(image, caption=None, width=None, use_column_width='always', output_format='auto')
 
+
 def show_data_preprocessing():
+    """
+    Showing page with preprocessing description and data before and after preprocessing
+    """
     st.header('Data Preprocessing Description ')
     preprocess_descriptions.get_numeric_description()
     preprocess_descriptions.get_binary_description()
@@ -87,23 +98,52 @@ def show_data_preprocessing():
 
 
 def show_predictions_page(df):
-    # Expander to prepare fake data
-    customer_data_exp = st.beta_expander('Create your own data and predict if "Disbursed"')
+    """
+    Showing predictions page. This page consists of a section to create customer profile (data), to predict whether
+    he should get the 'Disburse' or not.
+    Also, you can choose between customer data, example data provided by the bank, and you can upload your own data.
+    You can choos which estimator/estimators would you like to use to predict the 'Disburse'.
+    In last section you can see the scores for train/validation/test data for chosen estimators
+    and also it's learning parameters.
+    :param df: Raw data provided by the bank
+    """
     
-    with customer_data_exp:
-        customer_data = pd.DataFrame(fake_data_preparation.create_fake_data(df),
-                                     index=['Fake data'])  # creating fake data
-        st.write(customer_data)  # showing fake data
+    # # # #
+    # # #  part responsible for getting the data
+    # #
+    #
     
     #
-    # # Data
+    # # Choosing the source of the data
     #
-    possible_data = {'Created data': customer_data, 'Example data': customer_data, 'Uploaded data': customer_data}
+    possible_data = ['Customer data', 'Example data', 'Uploaded data']
     st.markdown('#### Choose what data would you like to use for predictions')
-    chosen_data = st.radio('Choose what data would you like to use for predictions', possible_data)
+    chosen_data = st.radio('', possible_data)
     
-    #
-    # # Models
+    if chosen_data == 'Customer data':
+        # # Customer Data
+        customer_data_exp = st.beta_expander('Create Customer data and predict if "Disbursed"')
+        with customer_data_exp:
+            customer_data = pd.DataFrame(fake_data_preparation.create_customer_data(df),
+                                         index=['Fake data'])  # creating customer profile data
+            st.write(customer_data)  # showing Customer data
+        
+        processing_data = customer_data
+    
+    if chosen_data == 'Example data':
+        # # Example Data provided by the Bank
+        bank_data = pd.read_csv('data/test.csv')
+        
+        processing_data = bank_data
+    
+    if chosen_data == 'Uploaded data':
+        # # Uploaded Data provided by the user
+        uploaded_data = st.file_uploader('Upload data for tests')
+        processing_data = uploaded_data
+    
+    # # # #
+    # # #  Part responsible for managing the data, includes results and scores
+    # #
     #
     
     # # Importing Scores
@@ -113,12 +153,12 @@ def show_predictions_page(df):
     estimators = scores.columns
     st.markdown("---")
     
-    # Choosing one or more models for predictions (only estimators that have calculated scores)
+    # # Choosing one or more models for predictions (only estimators that have calculated scores)
     st.markdown('#### Select trained models to use for predictions')
     chosen_estimators = st.multiselect('', estimators)
     
-    # Estimating the "Disbursed" feature
-    if chosen_estimators is not None:  # Works only if any estimator is selected
+    # # Estimating the "Disbursed" feature
+    if chosen_estimators:  # Works only if any estimator is selected
         st.markdown("##### Predictions for you: ")
         st.markdown('')
         
@@ -126,36 +166,36 @@ def show_predictions_page(df):
         
         for chosen_estimator in chosen_estimators:
             model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
-            st.write(f'{chosen_estimator} prediction: {model.predict(possible_data[chosen_data])[0]}')
+            st.write(f'{chosen_estimator} prediction: {model.predict(processing_data)[0]}')
             
             list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
             best_params_dict = dict()
             
-            # Getting names and values of best parameters from grid search results
+            # # Getting names and values of best parameters from grid search results
             for el in list_of_best_params:
-                st.write(el)
-                key, value = el.split(':')
+                key, value = el.split(sep=':', maxsplit=1)
                 key = key.strip().strip("'")
                 value = value.strip()
                 best_params_dict[key] = value
             
-            # DataFrame of best params for chosen estimator
+            # # DataFrame of best params for chosen estimator
             best_params_df = pd.DataFrame(best_params_dict.values(),
                                           index=best_params_dict.keys(),
                                           columns=[chosen_estimator])
             
             best_params_of_chosen_estimators.append(best_params_df)
         
-        # D ataFrame of best params for chosen estimators
+        # # DataFrame of best params for chosen estimators
         if len(best_params_of_chosen_estimators) == 1:
             final_best_params_df = best_params_of_chosen_estimators[0]
         elif len(best_params_of_chosen_estimators) > 1:
             final_best_params_df = pd.concat(best_params_of_chosen_estimators, axis=0)
         
-        # DataFrame of scores train/val/test
+        # # DataFrame of scores train/val/test
         scores_for_chosen_estimators = scores.loc[:, chosen_estimators].drop(['best_params'], axis=0)
         
         st.markdown("---")
+        
         if any(estimators) is any(chosen_estimators):
             st.markdown("#### Chosen models were trained, validated, and tested withwith following scores:")
             st.markdown("")

@@ -1,4 +1,3 @@
-import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.preprocessing import PowerTransformer, RobustScaler
@@ -16,7 +15,7 @@ binary_pipeline = Pipeline([
     ("back_to_df", utils.BackToDf(binary_features)),
     ("bin", transformers.BinaryEncoder()),  # takes df with features of two values and returns df with binary values
 ])
-# pd.DataFrame(binary_pipeline.fit_transform(X_train)).to_csv('binary_df.csv')
+
 # # # #
 # # # Numerical features
 # #
@@ -31,7 +30,7 @@ num_pipeline = Pipeline([
     ("box_cox", PowerTransformer(standardize=True)),
     ("back_to_df", utils.BackToDf(numerical_features))
 ])
-# pd.DataFrame(num_pipeline.fit_transform(X_train)).to_csv('numeric_df.csv')
+
 # # # #
 # # # Categorical features
 # # Replaces NaN with the most frequent value. Then OneHotEncoding is dividing data
@@ -39,10 +38,9 @@ num_pipeline = Pipeline([
 categorical_features = ['Var1', 'Var2', 'Var4']
 cat_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(categorical_features)),
-    ("impute", utils.MostFreqImputer()),
+    ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", utils.MyOneHotEncoder()),
 ])
-# pd.DataFrame(cat_pipeline.fit_transform(X_train)).to_csv('categorical_df.csv')
 
 # # # #
 # # # DOB feature
@@ -54,7 +52,6 @@ dob_pipeline = Pipeline([
     ("impute", SimpleImputer(strategy="median")),
     ("back_to_df", utils.BackToDf(['Age']))
 ])
-# pd.DataFrame(dob_pipeline.fit_transform(X_train)).to_csv('dob_df.csv')
 
 # # # #
 # # # Submitted feature
@@ -66,7 +63,6 @@ submitted_pipeline = Pipeline([
     ("submitted", transformers.Submitted()),
     ("impute", SimpleImputer(strategy="median")),
 ])
-# pd.DataFrame(submitted_pipeline.fit_transform(X_train)).to_csv('submitted_df.csv')
 
 # # # #
 # # # City feature
@@ -78,7 +74,6 @@ city_pipeline = Pipeline([
     ("city", transformers.City()),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
-# pd.DataFrame(city_pipeline.fit_transform(X_train)).to_csv('city_df.csv')
 
 # # # #
 # # # Salary_Account feature
@@ -90,7 +85,6 @@ salary_acc_pipeline = Pipeline([
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
-# pd.DataFrame(salary_acc_pipeline.fit_transform(X_train)).to_csv('salary_df.csv')
 
 # # # #
 # # # Employer_Name feature
@@ -102,7 +96,6 @@ emp_name = Pipeline([
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
-# pd.DataFrame(emp_name.fit_transform(X_train)).to_csv('employer_df.csv')
 
 # # # #
 # # # Source feature
@@ -115,7 +108,6 @@ source_pipeline = Pipeline([
     ("to_df", utils.BackToDf(['Source'])),
     ("cat_encoder", utils.MyOneHotEncoder()),
 ])
-# pd.DataFrame(source_pipeline.fit_transform(X_train)).to_csv('source_df.csv')
 
 # # # #
 # # # Income features
@@ -129,13 +121,9 @@ income_pipeline = Pipeline([
 ])
 
 
-# pd.DataFrame(income_pipeline.fit_transform(X_train)).to_csv('income_df.csv')
-
-
-def get_preprocessed_data(X_train=None):
+def get_preprocessed_data():
     """
     Concatenates all the preprocessed data into one array and returns it
-    :param X_train: Training dataset
     :return: Numpy array with all preprocessed data
     """
     preprocess_pipeline = FeatureUnion(transformer_list=[
@@ -150,9 +138,5 @@ def get_preprocessed_data(X_train=None):
         ("cat_pipeline", cat_pipeline),
         ("num_pipeline", num_pipeline),
     ])
-
-    # # for testing
-    # X_train_prep_filled2 = preprocess_pipeline.fit_transform(X_train)
-    # colnames = preprocess_pipeline.get_feature_names()
 
     return preprocess_pipeline

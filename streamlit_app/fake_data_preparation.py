@@ -2,7 +2,7 @@ import streamlit as st
 import datetime
 
 
-def create_fake_data(df):
+def create_customer_data(df):
     fake_data_container = st.beta_container()
     with fake_data_container:
         cols = st.beta_columns(7)
