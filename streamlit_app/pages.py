@@ -166,7 +166,11 @@ def show_predictions_page(df):
     if chosen_data == 'Uploaded data':
         # # Uploaded Data provided by the user
         uploaded_data = st.file_uploader('Upload data for tests')
-        processing_data = uploaded_data
+        if uploaded_data is not None:
+            st.write(pd.DataFrame(uploaded_data))
+            processing_data = uploaded_data
+        else:
+            st.stop()
     
     # # # #
     # # #  Part responsible for managing the data, includes results and scores
@@ -186,17 +190,30 @@ def show_predictions_page(df):
     
     # # Estimating the "Disbursed" feature
     if chosen_estimators:  # Works only if any estimator is selected
-        st.markdown("##### Predictions for you: ")
-        st.markdown('')
-        
         best_params_of_chosen_estimators = []
         
         for chosen_estimator in chosen_estimators:
             model = load(f'models/{"_".join(chosen_estimator.split())}_model.joblib')
-            st.write(f'{chosen_estimator}, '
-                     # f'prediction(s):{list(processing_data.index)}, '
-                     # f'{list(model.predict(processing_data))}'
-                     f'{list(zip(processing_data.index, model.predict(processing_data)))}')
+    
+            # Showing predictions for Customer data
+            if chosen_data == 'Customer data':
+                st.write(f'{chosen_estimator}, '
+                         f'{list(zip(processing_data.index, model.predict(processing_data)))}')
+    
+            # Showing predictions for Example data and Uploaded data
+            elif chosen_data == 'Example data' or chosen_data == 'Uploaded data':
+                predictions = pd.DataFrame(model.predict(processing_data),
+                                           columns=['Predictions'],
+                                           index=processing_data.ID)
+                prediction_cols = st.beta_columns((1, 4))
+                with prediction_cols[0]:
+                    st.markdown("##### Predictions for you: ")
+                    st.markdown('')
+                    st.write(predictions)
+                with prediction_cols[1]:
+                    st.markdown("##### Predictions Summary:")
+                    st.markdown('')
+                    st.write(predictions.iloc[:, 0].value_counts())
     
             list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
             best_params_dict = dict()
