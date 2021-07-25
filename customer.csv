@@ -1,4 +1,9 @@
 ,ID,Gender,City,Monthly_Income,DOB,Lead_Creation_Date,Loan_Amount_Applied,Loan_Tenure_Applied,Existing_EMI,Employer_Name,Salary_Account,Mobile_Verified,Var5,Var1,Loan_Amount_Submitted,Loan_Tenure_Submitted,Interest_Rate,Processing_Fee,EMI_Loan_Submitted,Filled_Form,Device_Type,Var2,Source,Var4,LoggedIn
 ,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,N,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
 ,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,N,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
-qwe,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,Y,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
+,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,N,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
+,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,N,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
+,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,N,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
+"l.,jmghnf",ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,N,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
+pawel,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,5.0,0.0,CYBOSOL,HDFC Bank,Y,0,HBXX,0.0,2.0,20.0,0,0,N,Web-browser,G,S122,1,0
+pawel,ID001050K00,Female,Delhi,0,1985-07-06,2015-07-06,0.0,10.0,0.0,CYBOSOL,HDFC Bank,Y,3,HBXX,10000.0,5.0,25.0,0,150000,Y,Web-browser,E,S133,7,1

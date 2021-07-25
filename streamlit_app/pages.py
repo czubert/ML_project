@@ -208,7 +208,7 @@ def show_predictions_page(df):
             # Showing predictions for Customer data
             if chosen_data == 'Customer data':
                 st.write(f'{chosen_estimator}, '
-                         f'{list(zip(processing_data.index, model.predict(processing_data)))}')
+                         f'{list(zip(processing_data.index, model.predict(processing_data.reset_index())))}')
     
             # Showing predictions for Example data and Uploaded data
             elif chosen_data == 'Example data' or chosen_data == 'Uploaded data':
@@ -220,7 +220,7 @@ def show_predictions_page(df):
                 st.markdown('')
     
                 prediction_cols = st.beta_columns((1, 4))
-    
+
                 with prediction_cols[0]:
                     st.markdown("##### Predictions for you: ")
                     st.markdown('')
