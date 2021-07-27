@@ -1,5 +1,5 @@
 from . import descriptions
-from . import fake_data_preparation
+from . import creating_customer_profile
 from . import pages
 from . import sidebar
 from . import utils

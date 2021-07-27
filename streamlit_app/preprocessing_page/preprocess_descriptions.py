@@ -22,13 +22,13 @@ def get_numeric_description():
         cols = st.beta_columns(2)
         with cols[0]:
             st.markdown('#### Before:')
-            raw_data = "downloads/raw_data.png"
+            raw_data = "utils/raw_data.png"
             st.image(raw_data, caption=None, width=None, use_column_width='always', output_format='PNG')
             st.write(pd.read_csv('streamlit_app/preprocessing_page/dfs/X.csv', usecols=features).head(50))
         
         with cols[1]:
             st.markdown('#### After:')
-            normal_dist = "downloads/normal_dist.png"
+            normal_dist = "utils/normal_dist.png"
             st.image(normal_dist, caption=None, width=None, use_column_width='always', output_format='PNG')
             st.write(
                 pd.read_csv('streamlit_app/preprocessing_page/dfs/numeric_df.csv', index_col='Unnamed: 0').head(50))
