@@ -23,9 +23,9 @@ def main():
     #
     sidebar.sidebar()
     
-    tabs = st.sidebar.radio("", ('Main', 'Data Profiling', 'Data Preprocessing', 'Predictions'))
+    tabs = st.sidebar.radio("", ('Problem Description', 'Data Profiling', 'Data Preprocessing', 'Predictions'))
 
-    if tabs == 'Main':
+    if tabs == 'Problem Description':
         # # #
         # # Main Page
         #

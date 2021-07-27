@@ -177,7 +177,6 @@ def show_predictions_page(df):
                 pred_data_collection2[f'{chosen_estimator}'] = model.predict(processing_data.reset_index())
             
                 st.write(predicted_data)
-                st.write(f'{list(zip(processing_data.index, model.predict(processing_data.reset_index())))}')
         
             # Showing predictions for Example data and Uploaded data
             elif chosen_data == 'Example data' or chosen_data == 'Uploaded data':
