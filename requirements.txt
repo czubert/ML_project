@@ -275,7 +275,6 @@ typing-extensions==3.7.4.3
 unicodecsv==0.14.1
 urllib3==1.25.7
 validators==0.14.2
-varName==0.0.1
 virtualenv==20.0.31
 virtualenv-clone==0.5.4
 wcwidth==0.1.7
