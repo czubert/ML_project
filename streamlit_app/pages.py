@@ -156,91 +156,92 @@ def show_predictions_page(df):
     estimators = scores.columns
     st.markdown("---")
 
-    # # Choosing one or more models for predictions (only estimators that have calculated scores)
-    if not processing_data.empty:
-        st.markdown('### Select trained models for predictions')
-        chosen_estimators = st.multiselect('', estimators)
 
     # # Estimating the "Disbursed" feature
     if not processing_data.empty:  # Works only if any estimator is selected
         best_params_of_chosen_estimators = []
+
+        # # Choosing one or more models for predictions (only estimators that have calculated scores)
+        st.markdown('### Select trained models for predictions')
+        chosen_estimators = st.multiselect('', estimators)
+
+        if chosen_estimators:
+            # Data collection for collective results with all variables + predictions of all chosen models
+            pred_data_collection = pd.DataFrame(processing_data)
     
-        # Data collection for collective results with all variables + predictions of all chosen models
-        pred_data_collection = pd.DataFrame(processing_data)
+            # Data collection for collective results with predictions of all chosen models
+            predictions_summary = pd.DataFrame(processing_data.iloc[:, 0])  # only predictions
     
-        # Data collection for collective results with predictions of all chosen models
-        predictions_summary = pd.DataFrame(processing_data.iloc[:, 0])  # only predictions
+            single_results_exp = st.beta_expander('Show predictions for each chosen estimator separately')
     
-        single_results_exp = st.beta_expander('Show predictions for each chosen estimator separately')
-    
-        for chosen_estimator in chosen_estimators:
-            model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
+            for chosen_estimator in chosen_estimators:
+                model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
         
-            predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
+                predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
         
-            predicted = model.predict(processing_data.reset_index())
+                predicted = model.predict(processing_data.reset_index())
         
-            predicted_data[f'Disbursed {chosen_estimator}'] = predicted
-            # predicted_data[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
-            pred_data_collection[f'Disbursed {chosen_estimator}'] = predicted
-            # pred_data_collection[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
-            predictions_summary[f'{chosen_estimator}'] = predicted
-            # predictions_summary[f'{chosen_estimator}'] = model.predict(processing_data.reset_index())
+                predicted_data[f'Disbursed {chosen_estimator}'] = predicted
+                # predicted_data[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
+                pred_data_collection[f'Disbursed {chosen_estimator}'] = predicted
+                # pred_data_collection[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
+                predictions_summary[f'{chosen_estimator}'] = predicted
+                # predictions_summary[f'{chosen_estimator}'] = model.predict(processing_data.reset_index())
         
-            with single_results_exp:
-                # Prediction columns
-                prediction_cols = st.beta_columns((4, 5))
+                with single_results_exp:
+                    # Prediction columns
+                    prediction_cols = st.beta_columns((4, 5))
             
-                with prediction_cols[0]:
-                    st.markdown(f'##### Showing predictions of {chosen_estimator}:')
-                    st.markdown('')
-                    st.write(predicted_data)
-                with prediction_cols[1]:
-                    st.markdown("##### Predictions Summary:")
-                    st.markdown('')
-                    st.write(predicted_data.iloc[:, 1].value_counts())
+                    with prediction_cols[0]:
+                        st.markdown(f'##### Showing predictions of {chosen_estimator}:')
+                        st.markdown('')
+                        st.write(predicted_data)
+                    with prediction_cols[1]:
+                        st.markdown("##### Predictions Summary:")
+                        st.markdown('')
+                        st.write(predicted_data.iloc[:, 1].value_counts())
         
-            list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
-            best_params_dict = dict()
+                list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
+                best_params_dict = dict()
         
-            # # Getting names and values of best parameters from grid search results
-            for el in list_of_best_params:
-                key, value = el.split(sep=':', maxsplit=1)
-                key = key.strip().strip("'")
-                value = value.strip()
-                best_params_dict[key] = value
+                # # Getting names and values of best parameters from grid search results
+                for el in list_of_best_params:
+                    key, value = el.split(sep=':', maxsplit=1)
+                    key = key.strip().strip("'")
+                    value = value.strip()
+                    best_params_dict[key] = value
         
-            # # DataFrame of best params for chosen estimator
-            best_params_df = pd.DataFrame(best_params_dict.values(),
-                                          index=best_params_dict.keys(),
-                                          columns=[chosen_estimator])
+                # # DataFrame of best params for chosen estimator
+                best_params_df = pd.DataFrame(best_params_dict.values(),
+                                              index=best_params_dict.keys(),
+                                              columns=[chosen_estimator])
         
-            best_params_of_chosen_estimators.append(best_params_df)
-    
-        # # Expander for collective results
-        collective_predictions = st.beta_expander('Show collective predictions')
-    
-        with collective_predictions:
-            st.markdown(f'##### Collective predictions for all customers with their profiles')
-            st.write(pred_data_collection)
+                best_params_of_chosen_estimators.append(best_params_df)
         
-            collective_prediction_cols = st.beta_columns((4, 5))
-            with collective_prediction_cols[0]:
-                st.markdown(f'##### Collective predictions for each clasifier')
-                st.write(predictions_summary)
-            with collective_prediction_cols[1]:
-                st.markdown("##### Predictions Summary:")
-                st.write(predictions_summary.iloc[:, 1:].apply(pd.Series.value_counts))
-    
+                # # Expander for collective results
+                collective_predictions = st.beta_expander('Show collective predictions')
+        
+                with collective_predictions:
+                    st.markdown(f'##### Collective predictions for all customers with their profiles')
+                    st.write(pred_data_collection)
+            
+                    collective_prediction_cols = st.beta_columns((4, 5))
+                    with collective_prediction_cols[0]:
+                        st.markdown(f'##### Collective predictions for each clasifier')
+                        st.write(predictions_summary)
+                    with collective_prediction_cols[1]:
+                        st.markdown("##### Predictions Summary:")
+                        st.write(predictions_summary.iloc[:, 1:].apply(pd.Series.value_counts))
+
         # # DataFrame of best params for chosen estimators
         if len(best_params_of_chosen_estimators) == 1:
             final_best_params_df = best_params_of_chosen_estimators[0]
         elif len(best_params_of_chosen_estimators) > 1:
             final_best_params_df = pd.concat(best_params_of_chosen_estimators, axis=0)
-    
+
         # # DataFrame of scores train/val/test
         scores_for_chosen_estimators = scores.loc[:, chosen_estimators].drop(['best_params'], axis=0)
-    
+
         st.markdown("---")
     
         if any(estimators) is any(chosen_estimators):
