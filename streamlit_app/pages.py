@@ -114,11 +114,11 @@ def show_predictions_page(df):
     #
     # # Choosing the source of the data
     #
-    possible_data = ['Example data', 'Customer data', 'Uploaded data']
+    possible_data = ['Create Customer Profile', 'Example data', 'Uploaded data']
     st.markdown('### Choose data for predictions')
-    chosen_data = st.radio('', possible_data, index=1)
+    chosen_data = st.radio('', possible_data, index=0)
 
-    if chosen_data == 'Customer data':
+    if chosen_data == 'Create Customer Profile':
         processing_data = show_customer_page(df)
 
     if chosen_data == 'Example data':
