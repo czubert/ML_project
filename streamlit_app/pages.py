@@ -115,7 +115,7 @@ def show_predictions_page(df):
     # # Choosing the source of the data
     #
     possible_data = ['Example data', 'Customer data', 'Uploaded data']
-    st.markdown('#### Choose what data would you like to use for predictions')
+    st.markdown('### Choose data for predictions')
     chosen_data = st.radio('', possible_data, index=1)
 
     if chosen_data == 'Customer data':
@@ -148,55 +148,48 @@ def show_predictions_page(df):
     # # #  Part responsible for managing the data, includes results and scores
     # #
     #
-    
+
     # # Importing Scores
     scores = pd.read_csv('models/best_trained_models/scores.csv', index_col='Unnamed: 0')
-    
+
     # # All available models
     estimators = scores.columns
     st.markdown("---")
-    
+
     # # Choosing one or more models for predictions (only estimators that have calculated scores)
-    st.markdown('### Select trained models for predictions')
-    chosen_estimators = st.multiselect('', estimators)
-    
+    if not processing_data.empty:
+        st.markdown('### Select trained models for predictions')
+        chosen_estimators = st.multiselect('', estimators)
+
     # # Estimating the "Disbursed" feature
-    if chosen_estimators and not processing_data.empty:  # Works only if any estimator is selected
+    if not processing_data.empty:  # Works only if any estimator is selected
         best_params_of_chosen_estimators = []
         pred_data_collection = pd.DataFrame(processing_data)  # whole data + predictions
         pred_data_collection2 = pd.DataFrame(processing_data.iloc[:, 0])  # only predictions
     
+        single_results_exp = st.beta_expander('Show results for each chosen estimator separately')
+    
         for chosen_estimator in chosen_estimators:
             model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
-            # Showing predictions for Customer data
-            if chosen_data == 'Customer data':
-                predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
-                st.markdown(f'#### Showing results of {chosen_estimator}:')
-                predicted_data[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
-                pred_data_collection[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
-                pred_data_collection2[f'{chosen_estimator}'] = model.predict(processing_data.reset_index())
-            
-                st.write(predicted_data)
         
-            # Showing predictions for Example data and Uploaded data
-            elif chosen_data == 'Example data' or chosen_data == 'Uploaded data':
-                predictions = pd.DataFrame(model.predict(processing_data),
-                                           columns=['Predictions'],
-                                           index=processing_data.ID)
-            
-                st.markdown(f"#### Predictions for {chosen_estimator}: ")
-                st.markdown('')
-            
-                prediction_cols = st.beta_columns((1, 4))
+            predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
+        
+            predicted_data[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
+            pred_data_collection[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
+            pred_data_collection2[f'{chosen_estimator}'] = model.predict(processing_data.reset_index())
+        
+            with single_results_exp:
+                # Prediction columns
+                prediction_cols = st.beta_columns((4, 3))
             
                 with prediction_cols[0]:
-                    st.markdown("##### Predictions for you: ")
+                    st.markdown(f'##### Showing results of {chosen_estimator}:')
                     st.markdown('')
-                    st.write(predictions)
+                    st.write(predicted_data)
                 with prediction_cols[1]:
                     st.markdown("##### Predictions Summary:")
                     st.markdown('')
-                    st.write(predictions.iloc[:, 0].value_counts())
+                    st.write(predicted_data.iloc[:, 1].value_counts())
         
             list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
             best_params_dict = dict()
@@ -214,10 +207,12 @@ def show_predictions_page(df):
                                           columns=[chosen_estimator])
         
             best_params_of_chosen_estimators.append(best_params_df)
-    
-        st.markdown(f'#### Collective results:')
-        st.write(pred_data_collection)
-        st.write(pred_data_collection2)
+        collective_results = st.beta_expander('Show collective results')
+        with collective_results:
+            st.markdown(f'##### Collective results with customer profile')
+            st.write(pred_data_collection)
+            st.markdown(f'##### Collective results for all chosen models')
+            st.write(pred_data_collection2)
     
         # # DataFrame of best params for chosen estimators
         if len(best_params_of_chosen_estimators) == 1:
@@ -231,10 +226,12 @@ def show_predictions_page(df):
         st.markdown("---")
     
         if any(estimators) is any(chosen_estimators):
-            st.markdown("#### Chosen models were trained, validated, and tested with following scores:")
-            st.markdown("")
+            st.markdown("### Show scores and best parameters of Chosen Models")
             # Showing a DataFrame of scores and best params for chosen estimators
-            st.write(pd.concat([scores_for_chosen_estimators, final_best_params_df], axis=0))
+            trained_models_exp = st.beta_expander('Show Scores and Best Parameters for Chosen Models During '
+                                                  'Training, Validation and Testing')
+            with trained_models_exp:
+                st.write(pd.concat([scores_for_chosen_estimators, final_best_params_df], axis=0))
 
 
 def show_customer_page(df):
