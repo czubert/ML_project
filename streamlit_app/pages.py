@@ -279,11 +279,15 @@ def show_customer_page(df):
                 customers_profiles.to_csv(CUSTOMER_PATH)
             except FileNotFoundError:
                 customer_data.to_csv(CUSTOMER_PATH)
-    
+
     # button to reset added profiles
     with button_cols[1]:
         if st.button('Reset Customer Profiles'):
-            pd.DataFrame().to_csv(CUSTOMER_PATH)
+            try:
+                pd.DataFrame().to_csv(CUSTOMER_PATH)
+            except PermissionError:
+                st.write('Create Customer Data')
+
     with customer_data_exp:
         try:
             processing_data = pd.read_csv(CUSTOMER_PATH, index_col='Unnamed: 0')
