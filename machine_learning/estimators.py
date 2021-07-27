@@ -21,7 +21,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from xgboost import XGBClassifier
+# from xgboost import XGBClassifier
+from xgboost.sklearn import XGBClassifier
 
 SCORE_PATH = 'models/scores.csv'
 SEED = 123
