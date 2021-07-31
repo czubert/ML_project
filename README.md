@@ -10,28 +10,29 @@
 - vis.py - streamlit script (streamlit run vis.py)
 
 ### Packages
-- data - train/test data
 - machine_learning - package with modules required to run machine learning script (ML_project.py)
-- models - trained models saved as *.joblib
 - streamlit_app - package with modules required to run streamlit app (vis.py)
 - utils - package with universal modules
 
+### Folders
+- data - train/test data
+- models - trained models saved as *.joblib
 ---
 
 ## Instructions
 
 ### General 
-1. Install libraries from requirements.txt
+1. Install libraries from `requirements.txt`
 
 ### Model training 
 
-1. Models are already trained and saved in "models/best_trained_models" directory
-2. To train the models by yourself run ML_project.py
+1. Models are already trained and saved in `models/best_trained_models` directory,
+2. To train the models by yourself `run ML_project.py`,
 3. Follow the steps, if you are not satisfied with the default models scores, to generate models based on different params:
-    - change/add new params, in classifiers->params(dict) from machine_learning.estimators, for each estimator and re-run ML_project.py,
+    - change/add new params, in `classifiers->params`(dict) from `machine_learning.estimators`, for each estimator and `re-run ML_project.py`,
     - when you are satisfied with the scores acquired on you params, delete scores.csv and all saved models in "models" directory **(leave the "best_trained_models" directory)**,
-    - run ML_project.py for the last time to save your best models and their scores in "models" directory -> copy-paste them to "best_trained_models" __(This step is required for the Streamlit app to work properly)__,
-    - also note that there should be only one occurence of the score for each estimator in scores.csv that you paste in the "best_trained_models",
+    - `run ML_project.py` for the last time to save your best models and their scores in "models" directory -> copy-paste them to "best_trained_models" __(This step is required for the Streamlit app to work properly)__,
+    - also note that there should be only one occurence of the score for each estimator in `scores.csv` that you paste in the `best_trained_models`,
     - you are now ready to run streamlit app to make the predictions for your customer,
 
 
@@ -42,7 +43,7 @@
     > streamlit run vis.py
 3. Enjoy predicting the disburse of 
     - Your client,
-    - test data
-    - uploaded data
+    - test data,
+    - uploaded data,
 
 
