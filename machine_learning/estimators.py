@@ -26,6 +26,7 @@ from xgboost.sklearn import XGBClassifier
 
 SCORE_PATH = 'models/scores.csv'
 SEED = 123
+
 classifiers = {
     'LogisticRegression':
         {

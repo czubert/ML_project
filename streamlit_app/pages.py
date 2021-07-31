@@ -182,11 +182,8 @@ def show_predictions_page(df):
                 predicted = model.predict(processing_data.reset_index())
         
                 predicted_data[f'Disbursed {chosen_estimator}'] = predicted
-                # predicted_data[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
                 pred_data_collection[f'Disbursed {chosen_estimator}'] = predicted
-                # pred_data_collection[f'Disbursed {chosen_estimator}'] = model.predict(processing_data.reset_index())
                 predictions_summary[f'{chosen_estimator}'] = predicted
-                # predictions_summary[f'{chosen_estimator}'] = model.predict(processing_data.reset_index())
         
                 with single_results_exp:
                     # Prediction columns
