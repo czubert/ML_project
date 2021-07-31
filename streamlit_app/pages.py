@@ -124,7 +124,7 @@ def show_predictions_page(df):
     if chosen_data == 'Example data':
         # # Example Data provided by the Bank
         bank_data = pd.read_csv('data/test.csv')
-    
+
         processing_data = bank_data
 
     if chosen_data == 'Uploaded data':
@@ -137,7 +137,7 @@ def show_predictions_page(df):
             # lines = [line.decode('utf-8') for line in lines]
             st.write()
             text_file = uploaded_data[0].read().decode('utf-8')
-    
+
             processing_data = pd.read_csv(io.StringIO(text_file), sep=',')
             st.markdown('##### Uploaded data representation')
             st.write(processing_data.head(50))
@@ -156,7 +156,6 @@ def show_predictions_page(df):
     estimators = scores.columns
     st.markdown("---")
 
-
     # # Estimating the "Disbursed" feature
     if not processing_data.empty:  # Works only if any estimator is selected
         best_params_of_chosen_estimators = []
@@ -166,18 +165,22 @@ def show_predictions_page(df):
         chosen_estimators = st.multiselect('', estimators)
 
         if chosen_estimators:
+            # New DataFrame with created profiles of customers and theirs id's
+            predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
+    
             # Data collection for collective results with all variables + predictions of all chosen models
             pred_data_collection = pd.DataFrame(processing_data)
     
             # Data collection for collective results with predictions of all chosen models
             predictions_summary = pd.DataFrame(processing_data.iloc[:, 0])  # only predictions
     
+            # # Defining expander for single results
             single_results_exp = st.beta_expander('Show predictions for each chosen estimator separately')
+            # # Defining expander for collective results
+            collective_predictions = st.beta_expander('Show collective predictions')
     
             for chosen_estimator in chosen_estimators:
                 model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
-        
-                predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
         
                 predicted = model.predict(processing_data.reset_index())
         
@@ -188,7 +191,7 @@ def show_predictions_page(df):
                 with single_results_exp:
                     # Prediction columns
                     prediction_cols = st.beta_columns((4, 5))
-            
+
                     with prediction_cols[0]:
                         st.markdown(f'##### Showing predictions of {chosen_estimator}:')
                         st.markdown('')
@@ -214,21 +217,19 @@ def show_predictions_page(df):
                                               columns=[chosen_estimator])
         
                 best_params_of_chosen_estimators.append(best_params_df)
+    
+            # # Expander for collective results
+            with collective_predictions:
+                st.markdown(f'##### Collective predictions for all customers with their profiles')
+                st.write(pred_data_collection)
         
-                # # Expander for collective results
-                collective_predictions = st.beta_expander('Show collective predictions')
-        
-                with collective_predictions:
-                    st.markdown(f'##### Collective predictions for all customers with their profiles')
-                    st.write(pred_data_collection)
-            
-                    collective_prediction_cols = st.beta_columns((4, 5))
-                    with collective_prediction_cols[0]:
-                        st.markdown(f'##### Collective predictions for each clasifier')
-                        st.write(predictions_summary)
-                    with collective_prediction_cols[1]:
-                        st.markdown("##### Predictions Summary:")
-                        st.write(predictions_summary.iloc[:, 1:].apply(pd.Series.value_counts))
+                collective_prediction_cols = st.beta_columns((4, 5))
+                with collective_prediction_cols[0]:
+                    st.markdown(f'##### Collective predictions for each clasifier')
+                    st.write(predictions_summary)
+                with collective_prediction_cols[1]:
+                    st.markdown("##### Predictions Summary:")
+                    st.write(predictions_summary.iloc[:, 1:].apply(pd.Series.value_counts))
 
         # # DataFrame of best params for chosen estimators
         if len(best_params_of_chosen_estimators) == 1:
@@ -240,7 +241,7 @@ def show_predictions_page(df):
         scores_for_chosen_estimators = scores.loc[:, chosen_estimators].drop(['best_params'], axis=0)
 
         st.markdown("---")
-    
+
         if any(estimators) is any(chosen_estimators):
             st.markdown("### Show scores and best parameters of Chosen Models")
             # Showing a DataFrame of scores and best params for chosen estimators
