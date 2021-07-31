@@ -37,10 +37,10 @@
 
 
 ### Streamlit application to make the predictions for your customers 
-1. This application (with trained models) is hosted with streamlit here: 
-    > https://share.streamlit.io/czubert/ml_project/vis.py
+1. This application (with trained models) is hosted with streamlit here:  
+    `https://share.streamlit.io/czubert/ml_project/vis.py`
 2. Run Streamlit application locally (if you want to work on your estimators) by typing:  
-    > streamlit run vis.py
+    `streamlit run vis.py`
 3. Enjoy predicting the disburse of 
     - Your client,
     - test data,
