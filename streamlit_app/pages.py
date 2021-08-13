@@ -123,7 +123,7 @@ def show_predictions_page(df):
 
     if chosen_data == 'Example data':
         # # Example Data provided by the Bank
-        bank_data = pd.read_csv('data/test.csv')
+        bank_data = pd.read_csv('data/Test.csv')
 
         processing_data = bank_data
 
