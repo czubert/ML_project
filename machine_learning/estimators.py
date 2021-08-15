@@ -27,6 +27,7 @@ from xgboost.sklearn import XGBClassifier
 SCORE_PATH = 'models/scores.csv'
 SEED = 123
 
+# The params set below are the params for which I have  received the best ROC-AUC score
 classifiers = {
     'LogisticRegression':
         {
@@ -154,134 +155,6 @@ classifiers = {
     #             }},
     #
 }
-
-# final_classifiers = {
-#     'LogisticRegression':
-#         {
-#             'name': 'LogisticRegression',
-#             'estimator': LogisticRegression(),
-#             'selector': SelectKBest(),
-#             'decomposition': PCA(),
-#             'params':
-#                 {
-#                     "classifier__class_weight": ['balanced'],
-#                     "classifier__C": [1],
-#                     "classifier__max_iter": [90],
-#                     "classifier__solver": ['saga'],
-#                     "classifier__penalty": ['l1'],
-#                     "classifier__tol": [0.0001],
-#                     'selector__k': [100],
-#                     'decomposition__n_components': [100],
-#                 }},
-#
-#     'SVC':
-#         {
-#             'name': 'SVC',
-#             'estimator': SVC(),
-#             'selector': SelectKBest(),
-#             'decomposition': None,
-#             'params':
-#                 {
-#                     "classifier__C": [2],
-#                     "classifier__kernel": ['rbf'],
-#                     "classifier__degree": [1],
-#                     "classifier__max_iter": [-1],
-#                     "classifier__gamma": ['auto'],
-#                     "classifier__tol": [0.1],
-#                     "classifier__probability": [True],
-#                     'selector__k': [150],
-#                 }},
-#
-#     'AdaBoostClassifier':
-#         {
-#             'name': 'AdaBoostClassifier',
-#             'estimator': AdaBoostClassifier(),
-#             'selector': None,
-#             'decomposition': None,
-#             'params':
-#                 {
-#                     'classifier__n_estimators': [500],
-#                     'classifier__learning_rate': [0.1],
-#                 }},
-#
-#     'DecisionTreeClassifier':
-#         {
-#             'name': 'DecisionTreeClassifier',
-#             'estimator': DecisionTreeClassifier(),
-#             'selector': SelectKBest(),
-#             'decomposition': PCA(),
-#             'params':
-#                 {
-#                     'classifier__max_features': [0.5],
-#                     'classifier__max_depth': [10],
-#                     'classifier__criterion': ['gini'],
-#                     'classifier__max_leaf_nodes': [10],
-#                     'classifier__min_weight_fraction_leaf': [0.01],
-#                     'classifier__min_samples_split': [5],
-#                     'selector__k': [100],
-#                     'decomposition__n_components': [90],
-#                 }},
-#
-#     'RandomForestClassifier':
-#         {
-#             'name': 'RandomForestClassifier',
-#             'estimator': RandomForestClassifier(),
-#             'selector': SelectKBest(),
-#             'decomposition': None,
-#             'params':
-#                 {
-#                     'classifier__n_estimators': list(range(100, 1000, 100)),
-#                     'classifier__criterion': ['gini'],
-#                     'classifier__max_features': [0.5],
-#                     'classifier__max_depth': [10],
-#                     'classifier__max_leaf_nodes': [150],
-#                     'classifier__min_samples_split': [5],
-#                     'classifier__bootstrap': [True],
-#                     'classifier__max_samples': [150],
-#                     'selector__k': [150],
-#                 }},
-#
-#     'XGBoostClassifier':
-#         {
-#             'name': 'XGBoostClassifier',
-#             'estimator': XGBClassifier(),
-#             'selector': SelectKBest(),
-#             'decomposition': None,
-#             'params':
-#                 {
-#                     'classifier__n_estimators': [1000],
-#                     'classifier__learning_rate': [0.01],
-#                     'classifier__max_depth': [4],
-#                     'classifier__booster': ['gbtree'],
-#                     'classifier__tree_method': ['auto'],
-#                     'classifier__gamma': [0],
-#                     'classifier__min_child_weight': [6],
-#                     'classifier__reg_alpha': [0.005],
-#                     'classifier__reg_lambda': [0.01],
-#                     'classifier__subsample': [0.9],
-#                     'classifier__colsample_bytree': [0.8],
-#                     'selector__k': [150],
-#                 }},
-#
-#     'ExtraTreesClassifier':
-#         {
-#             'name': 'ExtraTreesClassifier',
-#             'estimator': ExtraTreesClassifier(),
-#             'selector': SelectKBest(),
-#             'decomposition': None,
-#             'params':
-#                 {
-#                     'classifier__n_estimators': [1000],
-#                     'classifier__criterion': ['gini'],
-#                     'classifier__max_depth': [10],
-#                     'classifier__max_features': [50],
-#                     'classifier__min_samples_split': [9],
-#                     'classifier__min_samples_leaf': [4],
-#                     'classifier__max_samples': [11],
-#                     'selector__k': [150],
-#                 }},
-#
-# }
 
 kfold = StratifiedKFold(n_splits=5, random_state=SEED, shuffle=True)
 

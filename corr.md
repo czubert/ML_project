@@ -10,7 +10,8 @@
 
 
 - do zamianiania zmiennej na binarną mówiąća o tym czy jest brak czy nie można wykorzystać gotowca z
-  sklearna: https://scikit-learn.org/stable/modules/generated/sklearn.impute.MissingIndicator.html
+  sklearna: https://scikit-learn.org/stable/modules/generated/sklearn.impute.MissingIndicator.html  
+  -> poprawione
 
 
 - transformatory dla Salary_account i Empluer name robią to samo - zostawiają ileś najczęstszych wartości, a resztę
@@ -22,7 +23,10 @@
 
 - Odnośnie pytania w kodzie "# WHAT: da się do grida wrzucić jakoś różne parametry dla metod z tmp_pipe?" - nie jestem
   pewien czy rozumiem, bo przeciez w GridSearchCV z założenia drugia parametr, to właśnie siatka z różnymi wartościami
-  parametrów, które można a wręcz należy tam podać. Więc nie wiem do konca o co pytasz.
+  parametrów, które można a wręcz należy tam podać. Więc nie wiem do konca o co pytasz.  
+  -> poprawione
+  - to byl artefakt, wybacz. Usunąłem to czego dotyczyło pytanie. Chodziło mi o to, czy da się zrobić tak, żeby dane
+    były preprocesowane tylko raz, a potem podawane do modeli
 
 
 - Transformatory nei ppowinny modyfikować danych "inplace" - powinniśmy zawsze zwracać nowy obiekt, bo tutaj wywołanie
@@ -35,22 +39,27 @@
 
 
 - W klasie Income podobny błąd: Kwantyl powininen być policzony raz w metodzie fit i zapisany i w transformie do niego
-  się powinniśmy odwoływać.
+  się powinniśmy odwoływać.  
+  -> poprawione
 
 
 - Brakuje mi optymalizacji modeli - to chyba ta kwestia, o którą pytałeś - te gridsearch'e trzeba zrobić z rozpatrzeniem
   różnych parametrów.
-    - zrobiłem z użyciem różnych parametrów dla każdego estymatora.
-    - dostosowałem tak, żeby otrzymać jak najwyższe scory. Usunąłem parametry inne niż najlepsze w gotowym projekcie,
-      dlatego, że przy tej ilości danych, które są w zadaniu, dla jednego estymatora potrafiło mi mielić 2 dni
-    - jeżeli parametr nie wpływał na wyniki, to usuwałem go w ogóle, jeżeli najlepiej działał defaultowy to również go
-      usuwałem
+  - zrobiłem z użyciem różnych parametrów dla każdego estymatora.
+  - dostosowałem tak, żeby otrzymać jak najwyższe scory. Usunąłem parametry inne niż najlepsze w gotowym projekcie,
+    dlatego, że przy tej ilości danych, które są w zadaniu, dla jednego estymatora potrafiło mi mielić 2 dni
+  - jeżeli parametr nie wpływał na wyniki, to usuwałem go w ogóle, jeżeli najlepiej działał defaultowy to również go
+    usuwałem
+  - Mogę dać dwie zmienne classifiers, jedna gdzie będa rózne, a jedną z najlepszymi paramsami, ale wydawało mi się, że
+    to będzie nieczytelne
+  - Jeżeli chodziło o coś innego to daj proszę znać
 
 
 - Gdy mamy bardzo niezbalanswane dane, podział na train/test warto robić w taki sposób, żeby w obu cześciach był taki
   sam procent poszczególnych klas - w funkcji train_test_spli jest parametr stratify, który to załatwia.  
   -> poprawione,   
-  wyniki są zdecydowanie niższe dla ROCAUC, być może trzeba by jeszcze raz przeprowadzić optymalizację parametrów
+  - teraz wyniki są zdecydowanie niższe dla ROCAUC, być może trzeba by jeszcze raz przeprowadzić optymalizację
+    parametrów
 
 
 - Prośba jeszcze o przysłanie propozycji tytułu dla tego projektu w jezyku polskim, bo dodajemy go na certyfikatach:

@@ -128,11 +128,10 @@ class Income(BaseEstimator, TransformerMixin):
     
     def fit(self, X, y=None):
         self._monthly_income = X.Monthly_Income.quantile(0.95)
-        
         return self
     
     def transform(self, X, y=None):
         X = X.copy()
-        mask = X.Monthly_Income > X.Monthly_Income.quantile(0.95)
+        mask = X.Monthly_Income > self._monthly_income
         X.Monthly_Income[mask] = self._monthly_income
         return X
