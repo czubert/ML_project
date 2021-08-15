@@ -47,7 +47,7 @@ cat_pipeline = Pipeline([
 # # converts DOB to Age | drops DOB
 #
 dob_pipeline = Pipeline([
-    ("select_cat", utils.DataFrameSelector(['DOB'])),
+    ("select_cat", utils.DataFrameSelector(['DOB', 'Lead_Creation_Date'])),
     ("dob_to_age", transformers.DobToAge()),
     ("impute", SimpleImputer(strategy="median")),
     ("back_to_df", utils.BackToDf(['Age']))

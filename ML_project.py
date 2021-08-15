@@ -22,7 +22,8 @@ data = pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
 #
 # # Getting rid of irrelevant features
 #
-irrelevant_features = ['Lead_Creation_Date', 'ID', 'LoggedIn']
+irrelevant_features = ['ID', 'LoggedIn']
+# irrelevant_features = ['Lead_Creation_Date', 'ID', 'LoggedIn']
 data = data.drop(irrelevant_features, axis=1)  # drops features that have no impact on model
 data = data.dropna(subset=["Loan_Amount_Applied"])  # drops variables where Loan_Amount_applied is NaN
 
@@ -41,7 +42,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                     stratify=y)
 
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train,
-                                                  test_size=0.1,
+                                                  test_size=0.1111,
                                                   random_state=42,
                                                   stratify=y_train)
 

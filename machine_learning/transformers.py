@@ -54,10 +54,9 @@ class DobToAge(BaseEstimator, TransformerMixin):
     
     def transform(self, X, y=None):
         # Create age variable:
-        X.loc[:, 'Age'] = X['DOB'].apply(lambda x: 115 - int(x[-2:]))
+        X.loc[:, 'Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
         # drop DOB:
-        X.drop('DOB', axis=1, inplace=True)
-        
+        X.drop(['DOB', 'Lead_Creation_Date'], axis=1, inplace=True)
         return X
 
 
