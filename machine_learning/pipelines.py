@@ -82,7 +82,8 @@ city_pipeline = Pipeline([
 #
 salary_acc_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Salary_Account'])),
-    ("salary_acc", transformers.SalaryAcc()),
+    ("salary_acc", transformers.ValueGrouper()),
+    # ("salary_acc", transformers.SalaryAcc()),
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])

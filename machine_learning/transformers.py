@@ -72,6 +72,20 @@ class City(BaseEstimator, TransformerMixin):
         return X
 
 
+class ValueGrouper(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        X = X.copy()
+        counts = X.iloc[:, 0].value_counts(dropna=False)
+        rare_counts = list(counts[counts < 100].index)
+        mask = X.iloc[:, 0].isin(rare_counts)
+        X.iloc[mask, 0] = "Other"
+        
+        return X
+
+
 class SalaryAcc(BaseEstimator, TransformerMixin):
     # # Source (feature)
     def fit(self, X, y=None):
