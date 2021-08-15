@@ -5,15 +5,17 @@ from sklearn.model_selection import train_test_split
 from machine_learning import pipelines
 
 #
-# # warnings
+# # Ignore warnings
 #
 warnings.filterwarnings("ignore")
 
-# Path to scores
-SCORES = 'downloads/scores.csv'
+#
+# # Constants
+#
+SCORES = 'downloads/scores.csv'  # Path to store scores
 
 #
-# # Data for classification
+# # Read data for classification
 #
 data = pd.read_csv('data/Train_nyOWmfK.csv', encoding="latin1")
 
@@ -25,7 +27,7 @@ data = data.drop(irrelevant_features, axis=1)  # drops features that have no imp
 data = data.dropna(subset=["Loan_Amount_Applied"])  # drops variables where Loan_Amount_applied is NaN
 
 #
-# # getting X and y
+# # Getting X and y
 #
 X = data.drop(['Disbursed'], axis=1)
 y = data.Disbursed
@@ -33,9 +35,12 @@ y = data.Disbursed
 #
 # # Train, Test, Validation Split
 #
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42, stratify=y)
 
-X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.1, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train,
+                                                  test_size=0.1,
+                                                  random_state=42,
+                                                  stratify=y_train)
 
 #
 # # Preprocessing data
