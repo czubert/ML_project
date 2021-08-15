@@ -95,6 +95,7 @@ salary_acc_pipeline = Pipeline([
 emp_name = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Employer_Name'])),
     ("salary_acc", transformers.EmpName()),
+    # ("salary_acc", transformers.ValueGrouper()),
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])

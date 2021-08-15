@@ -74,15 +74,17 @@ class City(BaseEstimator, TransformerMixin):
 
 class ValueGrouper(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
+        self.feature_name = X.columns[0]
+        counts = X.iloc[:, 0].value_counts(dropna=False)
+        self.rare_counts = list(counts[counts < 100].index)
+    
         return self
     
     def transform(self, X, y=None):
         X = X.copy()
-        counts = X.iloc[:, 0].value_counts(dropna=False)
-        rare_counts = list(counts[counts < 100].index)
-        mask = X.iloc[:, 0].isin(rare_counts)
-        X.iloc[mask, 0] = "Other"
-        
+        mask = X[self.feature_name].isin(self.rare_counts)
+        X.loc[mask, self.feature_name] = "Other"
+    
         return X
 
 
