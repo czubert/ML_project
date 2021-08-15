@@ -91,50 +91,6 @@ class ValueGrouper(BaseEstimator, TransformerMixin):
         return X
 
 
-class SalaryAcc(BaseEstimator, TransformerMixin):
-    # # Source (feature)
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        X = X.copy()
-        salary_acc = X.Salary_Account.value_counts(dropna=False)
-        salary_acc_rare = list(salary_acc[salary_acc < 100].index)
-        mask = X['Salary_Account'].isin(salary_acc_rare)
-        X.loc[mask, "Salary_Account"] = "Other"
-        
-        return X
-
-
-class EmpName(BaseEstimator, TransformerMixin):
-    # # Source (feature)
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        X = X.copy()
-        
-        empnames = X.Employer_Name.value_counts(dropna=False)
-        empnames_rare = list(empnames[empnames < 30].index)
-        mask = X['Employer_Name'].isin(empnames_rare)
-        X.loc[mask, "Employer_Name"] = "Other"
-        
-        return X
-
-
-class Source(BaseEstimator, TransformerMixin):
-    # # Source (feature)
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        X = X.copy()
-        mask = ~X['Source'].isin({'S122', 'S133'})
-        X.loc[mask, 'Source'] = 'Other'
-        
-        return X
-
-
 class Income(BaseEstimator, TransformerMixin):
     """
     changing outliers to the value of 95th percentile

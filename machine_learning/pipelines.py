@@ -83,7 +83,6 @@ city_pipeline = Pipeline([
 salary_acc_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Salary_Account'])),
     ("salary_acc", transformers.ValueGrouper(limit=100)),
-    # ("salary_acc", transformers.SalaryAcc()),
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("cat_encoder", utils.MyOneHotEncoder()),  # OHE that returns dataframe with feature names
 ])
@@ -105,7 +104,7 @@ emp_name = Pipeline([
 #
 source_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Source'])),
-    ("source", transformers.Source()),  # replaces other then 2 most popular values with 'other'
+    ("salary_acc", transformers.ValueGrouper(limit=2)),  # replaces other then n most popular values with 'other'
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("to_df", utils.BackToDf(['Source'])),
     ("cat_encoder", utils.MyOneHotEncoder()),
