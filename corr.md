@@ -1,6 +1,7 @@
 - Licząc wiek, liczyłeś go na dzień dzisiejszy - natomiast to nie jest do konca ok. Bo jeśli ktoś składa wniosek do
   banku, to bak interesuje tak naprawdę wiek w momencie złożenia wniosku, a nie to w jakim wieku dana osoba jest
-  dzisiaj. Do policzenia takiego właściwego wieku musi buć wykorzystana zmienne lead_creation_date
+  dzisiaj. Do policzenia takiego właściwego wieku musi buć wykorzystana zmienne lead_creation_date  
+  -> poprawione
 
 
 - w sekcji Show categorical features preprocessing pod "after" wkradł sie błąd w prezentacji: jest tu ta sama tabelka co

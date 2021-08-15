@@ -1,4 +1,5 @@
 from sklearn.impute import SimpleImputer
+from sklearn.impute import MissingIndicator
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.preprocessing import PowerTransformer, RobustScaler
 
@@ -60,7 +61,7 @@ dob_pipeline = Pipeline([
 submitted_features = ['EMI_Loan_Submitted', 'Loan_Amount_Submitted', 'Loan_Tenure_Submitted', 'Processing_Fee']
 submitted_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(submitted_features)),
-    ("submitted", transformers.Submitted()),
+    ("submitted", MissingIndicator()),
     ("impute", SimpleImputer(strategy="median")),
 ])
 

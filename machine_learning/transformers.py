@@ -32,22 +32,6 @@ class EmiLoanSubmitted(BaseEstimator, TransformerMixin):
         return X
 
 
-class Submitted(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        for col in X.columns:
-            # applies 1 where there is data missing else 0
-            # X[f'{col}_Missing'] = X[col].apply(lambda x: 1 if pd.isnull(x) else 0)
-            X.loc[:, f'{col}_Missing'] = X[col].apply(lambda x: 1 if pd.isnull(x) else 0)
-            
-            # drop original variables:
-            X.drop(col, axis=1, inplace=True)
-        
-        return X
-
-
 class DobToAge(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
@@ -55,7 +39,7 @@ class DobToAge(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         # Create age variable:
         X.loc[:, 'Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
-        # drop DOB:
+        # drop DOB and Lead_Creation_Date from tmp DataFrame:
         X.drop(['DOB', 'Lead_Creation_Date'], axis=1, inplace=True)
         return X
 
