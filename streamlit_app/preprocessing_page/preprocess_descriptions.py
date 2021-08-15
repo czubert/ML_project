@@ -108,7 +108,8 @@ def get_categorical_description():
         
         with cols[1]:
             st.markdown('#### After:')
-            st.write(pd.read_csv('streamlit_app/preprocessing_page/dfs/binary_df.csv', index_col='Unnamed: 0').head(50))
+            st.write(
+                pd.read_csv('streamlit_app/preprocessing_page/dfs/categorical_df.csv', index_col='Unnamed: 0').head(50))
 
 
 categorical_features = """
