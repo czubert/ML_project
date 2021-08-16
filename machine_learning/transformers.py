@@ -38,10 +38,10 @@ class DobToAge(BaseEstimator, TransformerMixin):
     
     def transform(self, X, y=None):
         # Create age variable:
-        X.loc[:, 'Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
-        # drop DOB and Lead_Creation_Date from tmp DataFrame:
-        X.drop(['DOB', 'Lead_Creation_Date'], axis=1, inplace=True)
-        return X
+        age = pd.DataFrame()
+        age.loc[:, 'Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
+
+        return age
 
 
 class City(BaseEstimator, TransformerMixin):
