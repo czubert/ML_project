@@ -104,7 +104,7 @@ emp_name = Pipeline([
 #
 source_pipeline = Pipeline([
     ("select_cat", utils.DataFrameSelector(['Source'])),
-    ("salary_acc", transformers.ValueGrouper(limit=2)),  # replaces other then n most popular values with 'other'
+    ("salary_acc", transformers.ValueGrouper(limit=10000)),  # replaces with other less popular source than limit
     ("impute", SimpleImputer(strategy="most_frequent")),
     ("to_df", utils.BackToDf(['Source'])),
     ("cat_encoder", utils.MyOneHotEncoder()),

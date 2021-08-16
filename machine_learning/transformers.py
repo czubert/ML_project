@@ -87,7 +87,7 @@ class ValueGrouper(BaseEstimator, TransformerMixin):
         X = X.copy()
         mask = X[self.feature_name].isin(self.rare_counts)
         X.loc[mask, self.feature_name] = "Other"
-    
+
         return X
 
 
