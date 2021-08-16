@@ -95,157 +95,6 @@ def show_data_preprocessing():
     preprocess_descriptions.get_income_description()
 
 
-def show_predictions_page(df):
-    """
-    Showing predictions page. This page consists of a section to create customer profile (data), to predict whether
-    he should get the 'Disburse' or not.
-    Also, you can choose between customer data, example data provided by the bank, and you can upload your own data.
-    You can choos which estimator/estimators would you like to use to predict the 'Disburse'.
-    In last section you can see the scores for train/validation/test data for chosen estimators
-    and also it's learning parameters.
-    :param df: Raw data provided by the bank
-    """
-
-    # # # #
-    # # #  part responsible for getting the data
-    # #
-    #
-
-    #
-    # # Choosing the source of the data
-    #
-    possible_data = ['Create Customer Profile', 'Example data', 'Uploaded data']
-    st.markdown('### Choose data for predictions')
-    chosen_data = st.radio('', possible_data, index=0)
-
-    if chosen_data == 'Create Customer Profile':
-        processing_data = show_customer_page(df)
-
-    if chosen_data == 'Example data':
-        # # Example Data provided by the Bank
-        bank_data = pd.read_csv('data/Test.csv')
-
-        processing_data = bank_data
-
-    if chosen_data == 'Uploaded data':
-        # # Uploaded Data provided by the user
-        uploaded_data = st.file_uploader('Upload data for tests',
-                                         accept_multiple_files=True,
-                                         type=['txt', 'csv'])
-        if uploaded_data:
-            st.write()
-            text_file = uploaded_data[0].read().decode('utf-8')
-
-            processing_data = pd.read_csv(io.StringIO(text_file), sep=',')
-            st.markdown('##### Uploaded data representation')
-            st.write(processing_data.head(50))
-        else:
-            st.stop()
-    
-    # # # #
-    # # #  Part responsible for managing the data, includes results and scores
-    # #
-    #
-
-    # # Importing Scores
-    scores = pd.read_csv('models/best_trained_models/scores.csv', index_col='Unnamed: 0')
-    # # All available models
-    estimators = scores.columns
-    st.markdown("---")
-
-    # # Estimating the "Disbursed" feature
-    if not processing_data.empty:  # Works only if any estimator is selected
-        best_params_of_chosen_estimators = []
-
-        # # Choosing one or more models for predictions (only estimators that have calculated scores)
-        st.markdown('### Select trained models for predictions')
-        chosen_estimators = st.multiselect('', estimators)
-
-        if chosen_estimators:
-            # New DataFrame with created profiles of customers and theirs id's
-            predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
-    
-            # Data collection for collective results with all variables + predictions of all chosen models
-            pred_data_collection = pd.DataFrame(processing_data)
-    
-            # Data collection for collective results with predictions of all chosen models
-            predictions_summary = pd.DataFrame(processing_data.iloc[:, 0])  # only predictions
-    
-            # # Defining expander for single results
-            single_results_exp = st.beta_expander('Show predictions for each chosen estimator separately')
-            # # Defining expander for collective results
-            collective_predictions = st.beta_expander('Show collective predictions')
-    
-            for chosen_estimator in chosen_estimators:
-                model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
-
-                predicted = model.predict(processing_data.reset_index())
-                predicted_data[f'Disbursed {chosen_estimator}'] = predicted
-                pred_data_collection[f'Disbursed {chosen_estimator}'] = predicted
-                predictions_summary[f'{chosen_estimator}'] = predicted
-        
-                with single_results_exp:
-                    # Prediction columns
-                    prediction_cols = st.beta_columns((4, 5))
-
-                    with prediction_cols[0]:
-                        st.markdown(f'##### Showing predictions of {chosen_estimator}:')
-                        st.markdown('')
-                        st.write(predicted_data)
-                    with prediction_cols[1]:
-                        st.markdown("##### Predictions Summary:")
-                        st.markdown('')
-                        st.write(predicted_data.iloc[:, 1].value_counts())
-        
-                list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
-                best_params_dict = dict()
-        
-                # # Getting names and values of best parameters from grid search results
-                for el in list_of_best_params:
-                    key, value = el.split(sep=':', maxsplit=1)
-                    key = key.strip().strip("'")
-                    value = value.strip()
-                    best_params_dict[key] = value
-        
-                # # DataFrame of best params for chosen estimator
-                best_params_df = pd.DataFrame(best_params_dict.values(),
-                                              index=best_params_dict.keys(),
-                                              columns=[chosen_estimator])
-        
-                best_params_of_chosen_estimators.append(best_params_df)
-    
-            # # Expander for collective results
-            with collective_predictions:
-                st.markdown(f'##### Collective predictions for all customers with their profiles')
-                st.write(pred_data_collection)
-        
-                collective_prediction_cols = st.beta_columns((4, 5))
-                with collective_prediction_cols[0]:
-                    st.markdown(f'##### Collective predictions for each clasifier')
-                    st.write(predictions_summary)
-                with collective_prediction_cols[1]:
-                    st.markdown("##### Predictions Summary:")
-                    st.write(predictions_summary.iloc[:, 1:].apply(pd.Series.value_counts))
-
-        # # DataFrame of best params for chosen estimators
-        if len(best_params_of_chosen_estimators) == 1:
-            final_best_params_df = best_params_of_chosen_estimators[0]
-        elif len(best_params_of_chosen_estimators) > 1:
-            final_best_params_df = pd.concat(best_params_of_chosen_estimators, axis=0)
-
-        # # DataFrame of scores train/val/test
-        scores_for_chosen_estimators = scores.loc[:, chosen_estimators].drop(['best_params'], axis=0)
-
-        st.markdown("---")
-
-        if any(estimators) is any(chosen_estimators):
-            st.markdown("### Show scores and best parameters of Chosen Models")
-            # Showing a DataFrame of scores and best params for chosen estimators
-            trained_models_exp = st.beta_expander('Show Scores and Best Parameters for Chosen Models During '
-                                                  'Training, Validation and Testing')
-            with trained_models_exp:
-                st.write(pd.concat([scores_for_chosen_estimators, final_best_params_df], axis=0))
-
 
 def show_customer_page(df):
     processing_data = pd.DataFrame()
@@ -292,5 +141,157 @@ def show_customer_page(df):
                 st.write(processing_data)
         except FileNotFoundError:
             st.write('')
-    
+
     return processing_data
+
+
+def show_predictions_page(df):
+    """
+    Showing predictions page. This page consists of a section to create customer profile (data), to predict whether
+    he should get the 'Disburse' or not.
+    Also, you can choose between customer data, example data provided by the bank, and you can upload your own data.
+    You can choos which estimator/estimators would you like to use to predict the 'Disburse'.
+    In last section you can see the scores for train/validation/test data for chosen estimators
+    and also it's learning parameters.
+    :param df: Raw data provided by the bank
+    """
+    
+    # # # #
+    # # #  part responsible for getting the data
+    # #
+    #
+    
+    #
+    # # Choosing the source of the data
+    #
+    possible_data = ['Create Customer Profile', 'Example data', 'Uploaded data']
+    st.markdown('### Choose data for predictions')
+    chosen_data = st.radio('', possible_data, index=0)
+    
+    if chosen_data == 'Create Customer Profile':
+        processing_data = show_customer_page(df)
+    
+    if chosen_data == 'Example data':
+        # # Example Data provided by the Bank
+        bank_data = pd.read_csv('data/Test.csv')
+        
+        processing_data = bank_data
+    
+    if chosen_data == 'Uploaded data':
+        # # Uploaded Data provided by the user
+        uploaded_data = st.file_uploader('Upload data for tests',
+                                         accept_multiple_files=True,
+                                         type=['txt', 'csv'])
+        if uploaded_data:
+            st.write()
+            text_file = uploaded_data[0].read().decode('utf-8')
+            
+            processing_data = pd.read_csv(io.StringIO(text_file), sep=',')
+            st.markdown('##### Uploaded data representation')
+            st.write(processing_data.head(50))
+        else:
+            st.stop()
+    
+    # # # #
+    # # #  Part responsible for managing the data, including results and scores
+    # #
+    #
+    
+    # # Importing Scores
+    scores = pd.read_csv('models/best_trained_models/scores.csv', index_col='Unnamed: 0')
+    # # All available models
+    estimators = scores.columns
+    st.markdown("---")
+    
+    # # Estimating the "Disbursed" feature
+    if not processing_data.empty:  # Works only if any estimator is selected
+        best_params_of_chosen_estimators = []
+        
+        # # Choosing one or more models for predictions (only estimators that have calculated scores)
+        st.markdown('### Select trained models for predictions')
+        chosen_estimators = st.multiselect('', estimators)
+        
+        if chosen_estimators:
+            # New DataFrame with created profiles of customers and theirs id's
+            predicted_data = pd.DataFrame(processing_data.iloc[:, 0])
+            
+            # Data collection for collective results with all variables + predictions of all chosen models
+            pred_data_collection = pd.DataFrame(processing_data)
+            
+            # Data collection for collective results with predictions of all chosen models
+            predictions_summary = pd.DataFrame(processing_data.iloc[:, 0])  # only predictions
+            
+            # # Defining expander for single results
+            single_results_exp = st.beta_expander('Show predictions for each chosen estimator separately')
+            # # Defining expander for collective results
+            collective_predictions = st.beta_expander('Show collective predictions')
+            
+            for chosen_estimator in chosen_estimators:
+                model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
+                
+                predicted = model.predict(processing_data.reset_index())
+                predicted_data[f'Disbursed {chosen_estimator}'] = predicted
+                pred_data_collection[f'Disbursed {chosen_estimator}'] = predicted
+                predictions_summary[f'{chosen_estimator}'] = predicted
+                
+                with single_results_exp:
+                    # Prediction columns
+                    prediction_cols = st.beta_columns((4, 5))
+                    
+                    with prediction_cols[0]:
+                        st.markdown(f'##### Showing predictions of {chosen_estimator}:')
+                        st.markdown('')
+                        st.write(predicted_data)
+                    with prediction_cols[1]:
+                        st.markdown("##### Predictions Summary:")
+                        st.markdown('')
+                        st.write(predicted_data.iloc[:, 1].value_counts())
+                
+                list_of_best_params = scores.loc['best_params', chosen_estimator].strip('{').strip('}').split(',')
+                best_params_dict = dict()
+                
+                # # Getting names and values of best parameters from grid search results
+                for el in list_of_best_params:
+                    key, value = el.split(sep=':', maxsplit=1)
+                    key = key.strip().strip("'")
+                    value = value.strip()
+                    best_params_dict[key] = value
+                
+                # # DataFrame of best params for chosen estimator
+                best_params_df = pd.DataFrame(best_params_dict.values(),
+                                              index=best_params_dict.keys(),
+                                              columns=[chosen_estimator])
+                
+                best_params_of_chosen_estimators.append(best_params_df)
+            
+            # # Expander for collective results
+            with collective_predictions:
+                st.markdown(f'##### Collective predictions for all customers with their profiles')
+                st.write(pred_data_collection)
+                
+                collective_prediction_cols = st.beta_columns((4, 5))
+                with collective_prediction_cols[0]:
+                    st.markdown(f'##### Collective predictions for each clasifier')
+                    st.write(predictions_summary)
+                with collective_prediction_cols[1]:
+                    st.markdown("##### Predictions Summary:")
+                    st.write(predictions_summary.iloc[:, 1:].apply(pd.Series.value_counts))
+        
+        # # DataFrame of best params for chosen estimators
+        if len(best_params_of_chosen_estimators) == 1:
+            final_best_params_df = best_params_of_chosen_estimators[0]
+        elif len(best_params_of_chosen_estimators) > 1:
+            final_best_params_df = pd.concat(best_params_of_chosen_estimators, axis=0)
+        
+        # # DataFrame of scores train/val/test
+        scores_for_chosen_estimators = scores.loc[:, chosen_estimators].drop(['best_params'], axis=0)
+        
+        st.markdown("---")
+        
+        if any(estimators) is any(chosen_estimators):
+            st.markdown("### Show scores and best parameters of Chosen Models")
+            # Showing a DataFrame of scores and best params for chosen estimators
+            trained_models_exp = st.beta_expander('Show Scores and Best Parameters for Chosen Models During '
+                                                  'Training, Validation and Testing')
+            with trained_models_exp:
+                st.write(pd.concat([scores_for_chosen_estimators, final_best_params_df], axis=0))

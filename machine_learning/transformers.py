@@ -31,39 +31,6 @@ class DobToAge(BaseEstimator, TransformerMixin):
         age['Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
         return age
 
-
-class Submitted(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        return self
-
-
-class SalaryAcc(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        return self
-
-
-class Source(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        return self
-
-
-class EmpName(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        return self
-
-
 class City(BaseEstimator, TransformerMixin):
     # # City (feature)
     # Splitting data into categories
