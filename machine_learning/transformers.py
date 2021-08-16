@@ -93,10 +93,8 @@ class ValueGrouper(BaseEstimator, TransformerMixin):
 
 class Income(BaseEstimator, TransformerMixin):
     """
-    changing outliers to the value of 95th percentile
+    changing outliers to the value of 95th percentile Monthly_Income feature
     """
-    
-    # # Monthly income (feature)
     
     # # checking outliers for this feature
     # px.line(data.Monthly_Income.quantile(np.arange(0,1,0.01))).show('browser')  # based on plot we take 95 percentile
