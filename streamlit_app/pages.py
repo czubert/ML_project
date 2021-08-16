@@ -133,8 +133,6 @@ def show_predictions_page(df):
                                          accept_multiple_files=True,
                                          type=['txt', 'csv'])
         if uploaded_data:
-            # lines = uploaded_data[0].readlines()
-            # lines = [line.decode('utf-8') for line in lines]
             st.write()
             text_file = uploaded_data[0].read().decode('utf-8')
 
@@ -151,7 +149,6 @@ def show_predictions_page(df):
 
     # # Importing Scores
     scores = pd.read_csv('models/best_trained_models/scores.csv', index_col='Unnamed: 0')
-
     # # All available models
     estimators = scores.columns
     st.markdown("---")
@@ -181,9 +178,8 @@ def show_predictions_page(df):
     
             for chosen_estimator in chosen_estimators:
                 model = load(f'models/best_trained_models/{"_".join(chosen_estimator.split())}_model.joblib')
-        
+
                 predicted = model.predict(processing_data.reset_index())
-        
                 predicted_data[f'Disbursed {chosen_estimator}'] = predicted
                 pred_data_collection[f'Disbursed {chosen_estimator}'] = predicted
                 predictions_summary[f'{chosen_estimator}'] = predicted

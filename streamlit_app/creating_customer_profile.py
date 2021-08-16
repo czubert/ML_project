@@ -36,7 +36,6 @@ def create_customer_data(df):
         with cols[4]:
             fake_dob = st.date_input('Input Date of Birth', datetime.date(1985, 7, 6))  # DOB
             fake_salary = st.selectbox('Input Your Salary Account', df.Salary_Account.unique())  # Salary_Account
-            # TODO important - check if Interest_Rate is for sure numerical not categorical
             fake_interest = st.slider('Select Your Salary Account', 11., 40., 20., 0.5)  # Interest_Rate
             fake_source = st.selectbox('Select Source', df.Source.unique())  # Source
         

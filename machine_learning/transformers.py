@@ -14,11 +14,11 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     
     def transform(self, X, y=None):
         
-        X = X.copy()
+        bins = X.copy()
         for k, v in self.tests.items():
-            X[k] = (X[k] == v).astype(int)
-        
-        return X
+            bins[k] = (bins[k] == v).astype(int)
+
+        return bins
 
 
 class DobToAge(BaseEstimator, TransformerMixin):
@@ -30,6 +30,38 @@ class DobToAge(BaseEstimator, TransformerMixin):
         age = pd.DataFrame()
         age['Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
         return age
+
+
+class Submitted(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        return self
+
+
+class SalaryAcc(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        return self
+
+
+class Source(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        return self
+
+
+class EmpName(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X, y=None):
+        return self
 
 
 class City(BaseEstimator, TransformerMixin):
@@ -70,13 +102,12 @@ class ValueGrouper(BaseEstimator, TransformerMixin):
         self.rare_counts = list(counts[counts < self.limit].index)
         
         return self
-    
-    def transform(self, X, y=None):
-        X = X.copy()
-        mask = X[self.feature_name].isin(self.rare_counts)
-        X.loc[mask, self.feature_name] = "Other"
 
-        return X
+    def transform(self, X, y=None):
+        grouped_values = X.copy()
+        mask = grouped_values[self.feature_name].isin(self.rare_counts)
+        grouped_values.loc[mask, self.feature_name] = "Other"
+        return grouped_values
 
 
 class Income(BaseEstimator, TransformerMixin):
@@ -90,9 +121,10 @@ class Income(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         self._monthly_income = X.Monthly_Income.quantile(0.95)
         return self
-    
+
     def transform(self, X, y=None):
-        X = X.copy()
-        mask = X.Monthly_Income > self._monthly_income
-        X.Monthly_Income[mask] = self._monthly_income
-        return X
+        income = X.copy()
+        mask = income.Monthly_Income > self._monthly_income
+        income.Monthly_Income[mask] = self._monthly_income
+    
+        return income

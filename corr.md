@@ -35,7 +35,7 @@
 - Transformatory nei ppowinny modyfikować danych "inplace" - powinniśmy zawsze zwracać nowy obiekt, bo tutaj wywołanie
   pipelinu nieodwracalnie wpływa na postać podanych danych, a to nei pownno się dziać - w sensie jak mamy dane w jakiejś
   zmiennej, to pipeline nei poininen ich modyfikować.  
-  ->
+  -> poprawione (?)
 
 
 - Klasa SalaryAcc powinna działać analogicznie do City - w metodzie fit zliczać częstości, a w transformie tylko

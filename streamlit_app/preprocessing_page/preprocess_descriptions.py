@@ -282,7 +282,7 @@ def get_employer_description():
     
         st.code(employer_feature, language='python')
     
-        cols = st.beta_columns([2, 3])
+        cols = st.beta_columns([2, 2])
         with cols[0]:
             st.markdown('#### Before:')
             st.write(pd.read_csv('streamlit_app/preprocessing_page/dfs/X.csv', usecols=['Employer_Name']).head(50))
@@ -318,8 +318,8 @@ def get_source_description():
         st.markdown(TEXT)
     
         st.code(source_feature, language='python')
-    
-        cols = st.beta_columns([1, 6])
+
+        cols = st.beta_columns([1, 4])
         with cols[0]:
             st.markdown('#### Before:')
             st.write(pd.read_csv('streamlit_app/preprocessing_page/dfs/X.csv', usecols=['Source']).head(50))
@@ -355,8 +355,8 @@ def get_income_description():
         st.markdown(TEXT)
         
         st.code(income_feature, language='python')
-        
-        cols = st.beta_columns([1, 6])
+
+        cols = st.beta_columns([1, 3])
         with cols[0]:
             st.markdown('#### Before:')
             st.write(pd.read_csv('streamlit_app/preprocessing_page/dfs/X.csv', usecols=['Monthly_Income']).head(50))
