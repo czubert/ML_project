@@ -133,6 +133,7 @@ def get_preprocessed_data():
         ("submitted_pipeline", submitted_pipeline),
         ("salary_pipeline", salary_acc_pipeline),
         ("emp_name", emp_name),
+        ("dob_to_age", dob_pipeline),
         ("city_pipeline", city_pipeline),
         ("source_pipeline", source_pipeline),
         ("income_pipeline", income_pipeline),

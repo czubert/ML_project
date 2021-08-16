@@ -3,31 +3,20 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class BinaryEncoder(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
+    def __init__(self):
         self.tests = {}
+    
+    def fit(self, X, y=None):
         for col in X.columns:
             self.tests[col] = X[col][1]
-
+        
         return self
-
-    def transform(self, X, y=None):
     
+    def transform(self, X, y=None):
+        
         X = X.copy()
         for k, v in self.tests.items():
             X[k] = (X[k] == v).astype(int)
-    
-        return X
-
-
-class EmiLoanSubmitted(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X, y=None):
-        # applies 1 where there is data missing else 0
-        X['EMI_Loan_Submitted_Missing'] = X['EMI_Loan_Submitted'].apply(lambda x: 1 if pd.isnull(x) else 0)
-        # drop original variables:
-        X.drop('EMI_Loan_Submitted', axis=1, inplace=True)
         
         return X
 
@@ -39,8 +28,7 @@ class DobToAge(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         # Create age variable:
         age = pd.DataFrame()
-        age.loc[:, 'Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
-
+        age['Age'] = X['DOB'].apply(lambda x: int(x[-2:])) - X['Lead_Creation_Date'].apply(lambda x: int(x[-2:]))
         return age
 
 
