@@ -66,13 +66,13 @@ class ValueGrouper(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         self.feature_name = X.columns[0]
         counts = X.iloc[:, 0].value_counts(dropna=False)
-        self.rare_counts = list(counts[counts < self.limit].index)
+        self.major_counts = list(counts[counts > self.limit].index)
         
         return self
 
     def transform(self, X, y=None):
         grouped_values = X.copy()
-        mask = grouped_values[self.feature_name].isin(self.rare_counts)
+        mask = ~grouped_values[self.feature_name].isin(self.major_counts)
         grouped_values.loc[mask, self.feature_name] = "Other"
         return grouped_values
 
@@ -86,12 +86,12 @@ class Income(BaseEstimator, TransformerMixin):
     # px.line(data.Monthly_Income.quantile(np.arange(0,1,0.01))).show('browser')  # based on plot we take 95 percentile
     
     def fit(self, X, y=None):
-        self._monthly_income = X.Monthly_Income.quantile(0.95)
+        self._upper_limit = X.Monthly_Income.quantile(0.95)
         return self
 
     def transform(self, X, y=None):
         income = X.copy()
-        mask = income.Monthly_Income > self._monthly_income
-        income.Monthly_Income[mask] = self._monthly_income
+        mask = income.Monthly_Income > self._upper_limit
+        income.Monthly_Income[mask] = self._upper_limit
     
         return income
