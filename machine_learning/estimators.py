@@ -37,122 +37,121 @@ classifiers = {
             'decomposition': PCA(),
             'params':
                 {
-                    "classifier__class_weight": ['balanced'],
-                    "classifier__C": [1],
-                    "classifier__max_iter": [90],
-                    "classifier__solver": ['saga'],
-                    "classifier__penalty": ['l1'],
-                    "classifier__tol": [0.0001],
-                    'selector__k': [100],
-                    'decomposition__n_components': [100],
+                    "classifier__penalty": ['l1'],  # ['l1','l2', 'elasticnet', 'none]  best: 'l1'
+                    "classifier__tol": [0.0001],  # [0.00001,0.0001,0.001,0.01, 0.1]  best: 0.0001
+                    "classifier__C": [1],  # [0.01,0.01,1,10]  best: 1
+                    "classifier__class_weight": ['balanced'],  # ['balanced', None]  best: 'balanced'
+                    "classifier__solver": ['saga'],  # []  best: 'saga'
+                    "classifier__max_iter": [90],  # [60, 90, 100, 150] best: 90
+                    'selector__k': [100],  # [80, 100,200]  best: 100
+                    'decomposition__n_components': [100],  # [5,10,50,100,200]  best: 100
                 }},
-    #
-    # 'SVC':
-    #     {
-    #         'name': 'SVC',
-    #         'estimator': SVC(),
-    #         'selector': SelectKBest(),
-    #         'decomposition': None,
-    #         'params':
-    #             {
-    #                 "classifier__C": [2],
-    #                 "classifier__kernel": ['rbf'],
-    #                 "classifier__degree": [1],
-    #                 "classifier__max_iter": [-1],
-    #                 "classifier__gamma": ['auto'],
-    #                 "classifier__tol": [0.1],
-    #                 "classifier__probability": [True],
-    #                 'selector__k': [150],
-    #             }},
-    #
-    # 'AdaBoostClassifier':
-    #     {
-    #         'name': 'AdaBoostClassifier',
-    #         'estimator': AdaBoostClassifier(),
-    #         'selector': None,
-    #         'decomposition': None,
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [500],
-    #                 'classifier__learning_rate': [0.1],
-    #             }},
-    #
-    # 'DecisionTreeClassifier':
-    #     {
-    #         'name': 'DecisionTreeClassifier',
-    #         'estimator': DecisionTreeClassifier(),
-    #         'selector': SelectKBest(),
-    #         'decomposition': PCA(),
-    #         'params':
-    #             {
-    #                 'classifier__max_features': [0.5],
-    #                 'classifier__max_depth': [10],
-    #                 'classifier__criterion': ['gini'],
-    #                 'classifier__max_leaf_nodes': [10],
-    #                 'classifier__min_weight_fraction_leaf': [0.01],
-    #                 'classifier__min_samples_split': [5],
-    #                 'selector__k': [100],
-    #                 'decomposition__n_components': [90],
-    #             }},
-    #
-    # 'RandomForestClassifier':
-    #     {
-    #         'name': 'RandomForestClassifier',
-    #         'estimator': RandomForestClassifier(),
-    #         'selector': SelectKBest(),
-    #         'decomposition': None,
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': list(range(100, 1000, 100)),
-    #                 'classifier__criterion': ['gini'],
-    #                 'classifier__max_features': [0.5],
-    #                 'classifier__max_depth': [10],
-    #                 'classifier__max_leaf_nodes': [150],
-    #                 'classifier__min_samples_split': [5],
-    #                 'classifier__bootstrap': [True],
-    #                 'classifier__max_samples': [150],
-    #                 'selector__k': [150],
-    #             }},
-    #
-    # 'XGBoostClassifier':
-    #     {
-    #         'name': 'XGBoostClassifier',
-    #         'estimator': XGBClassifier(),
-    #         'selector': SelectKBest(),
-    #         'decomposition': None,
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [1000],
-    #                 'classifier__learning_rate': [0.01],
-    #                 'classifier__max_depth': [4],
-    #                 'classifier__booster': ['gbtree'],
-    #                 'classifier__tree_method': ['auto'],
-    #                 'classifier__gamma': [0],
-    #                 'classifier__min_child_weight': [6],
-    #                 'classifier__reg_alpha': [0.005],
-    #                 'classifier__reg_lambda': [0.01],
-    #                 'classifier__subsample': [0.9],
-    #                 'classifier__colsample_bytree': [0.8],
-    #                 'selector__k': [150],
-    #             }},
-    #
-    # 'ExtraTreesClassifier':
-    #     {
-    #         'name': 'ExtraTreesClassifier',
-    #         'estimator': ExtraTreesClassifier(),
-    #         'selector': SelectKBest(),
-    #         'decomposition': None,
-    #         'params':
-    #             {
-    #                 'classifier__n_estimators': [1000],
-    #                 'classifier__criterion': ['gini'],
-    #                 'classifier__max_depth': [10],
-    #                 'classifier__max_features': [50],
-    #                 'classifier__min_samples_split': [9],
-    #                 'classifier__min_samples_leaf': [4],
-    #                 'classifier__max_samples': [11],
-    #                 'selector__k': [150],
-    #             }},
+    
+    'SVC':
+        {
+            'name': 'SVC',
+            'estimator': SVC(),
+            'selector': SelectKBest(),
+            'decomposition': None,  # None because PCA() lowers the scores
+            'params':
+                {
+                    "classifier__C": [2],  # [0.01, 0.1, 1, 2]  best: 2
+                    "classifier__kernel": ['rbf'],  # ['rbf','poly','linear']  best: 'rbf'
+                    "classifier__degree": [1],  # [1,3,5]  best: 1
+                    "classifier__max_iter": [-1],  # [-1, 1, 10, 100, 1000]  best: -1
+                    "classifier__gamma": ['auto'],  # []  best: 'auto'
+                    "classifier__tol": [0.1],  # [0.001, 0.01,0.1 ,1]  best: 0.1
+                    "classifier__probability": [True],  # [True, False]  best: True
+                    'selector__k': [90],  # [30, 50, 90, 100, 150, 200]  best: 90
+                }},
+    
+    'AdaBoostClassifier':
+        {
+            'name': 'AdaBoostClassifier',
+            'estimator': AdaBoostClassifier(),
+            'selector': None,
+            'decomposition': None,
+            'params':
+                {
+                    'classifier__n_estimators': [250],  # [100, 250, 500, 1000]  best: 500
+                    'classifier__learning_rate': [0.1],  # [0.01, 0.1, 1]  best: 0.1
+                }},
+    
+    'DecisionTreeClassifier':
+        {
+            'name': 'DecisionTreeClassifier',
+            'estimator': DecisionTreeClassifier(),
+            'selector': SelectKBest(),
+            'decomposition': PCA(),
+            'params':
+                {
+                    'classifier__max_features': [0.6],  # [0.5, 0.6, 0.7]  best: 0.6
+                    'classifier__max_depth': [15],  # [1, 5, 10, 15, 20, 50, 100]  best: 15
+                    'classifier__criterion': ['gini'],  # ['gini']  best: 'gini'
+                    'classifier__max_leaf_nodes': [15],  # [1,5,10, 20, 100]  best: 15
+                    'classifier__min_weight_fraction_leaf': [0.05],  # [0.001, 0.01, 0.05, 0.06]  best: 0.05
+                    'classifier__min_samples_split': [5],  # [1,4,5,6,10]  best: 5
+                    'selector__k': [200],  # [50, 100, 150, 200]  best: 200
+                    'decomposition__n_components': [90],  # []  best: 90
+                }},
+    
+    'RandomForestClassifier':
+        {
+            'name': 'RandomForestClassifier',
+            'estimator': RandomForestClassifier(),
+            'selector': SelectKBest(),
+            'decomposition': None,
+            'params':
+                {
+                    'classifier__n_estimators': [300],  # [list(range(100, 900, 200))]  best: 300
+                    'classifier__criterion': ['gini'],  # ['gini']  best:'gini'
+                    'classifier__max_features': [0.5],  # [0.3, 0.5, 0.7]  best: 0.5
+                    'classifier__max_depth': [100],  # [1,10,100]  best: 100
+                    'classifier__max_leaf_nodes': [250],  # [50, 150, 250]  best: 250
+                    'classifier__min_samples_split': [5],  # [1, 5, 10]  best: 5
+                    'classifier__bootstrap': [True],  # [True, False]  best: True
+                    'classifier__max_samples': [250],  # [50, 150, 250]  best: 250
+                    'selector__k': [100],  # [50,100,120,130,150,200]  best: 100
+                }},
+    
+    'XGBoostClassifier':
+        {
+            'name': 'XGBoostClassifier',
+            'estimator': XGBClassifier(),
+            'selector': SelectKBest(),
+            'decomposition': None,
+            'params':
+                {
+                    'classifier__n_estimators': [1000],  # [10, 100, 500, 1000] best: 1000
+                    'classifier__learning_rate': [0.01],  # [0.0001, 0.001,0.1] best: 0.01
+                    'classifier__max_depth': [3],  # [1,3,4,5,10] best: 3
+                    'classifier__booster': ['gbtree'],  # ['gbtree', 'gblinear','dart'] best: 'gbtree'
+                    'classifier__gamma': [0],  # [0,0.1,0.001] best: [0]
+                    'classifier__min_child_weight': [2],  # [1,2,3,4,6,10] best: 2
+                    'classifier__reg_alpha': [0.005],  # [0.0001, 0.005, 0.001, 0.1] best: 0.005
+                    'classifier__reg_lambda': [0.0005],  # [0.0001, 0.005, 0.001, 0.1] best: 0.0005
+                    'classifier__subsample': [0.9],  # [0.7,0.8,0.9] best: 0.9
+                    'classifier__colsample_bytree': [0.8],  # [0.7,0.8,0.9] best: 0.8
+                    'selector__k': [100],  # [50,100,150] best: 100
+                }},
+    
+    'ExtraTreesClassifier':
+        {
+            'name': 'ExtraTreesClassifier',
+            'estimator': ExtraTreesClassifier(),
+            'selector': SelectKBest(),
+            'decomposition': None,
+            'params':
+                {
+                    'classifier__n_estimators': [1000],  # []  best: 1000
+                    'classifier__criterion': ['gini'],  # ['gini]  best: 'gini'
+                    'classifier__max_depth': [14],  # [5,10,30]  best: 14
+                    'classifier__max_features': [40],  # [40, 50, 60, 100,150]  best: 40
+                    'classifier__min_samples_split': [50],  # [1,7,10]  best: 50
+                    'classifier__min_samples_leaf': [1],  # [1,4,6,10]  best: 1
+                    'classifier__max_samples': [5],  # [4,5,6,7,10]  best: 5
+                    'selector__k': [160],  # [50,100,150,160,170]  best: 160
+                }},
     
 }
 
