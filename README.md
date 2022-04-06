@@ -1,5 +1,6 @@
 # Happy Customer Bank
-## Machine Learning prediction if a client should get disburse
+## https://datahack.analyticsvidhya.com/contest/data-hackathon-3x/
+Machine Learning prediction if a client should get disburse - hackathon task
 ---
 ---
 
